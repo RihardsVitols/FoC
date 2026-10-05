@@ -6,14 +6,11 @@
     <title>ARUCAD | Faculty of Communication</title>
     <style>
         /* CSS Reset & Base Variables */
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: #111827;
-            --accent-color: #3b82f6;
-            --accent-hover: #2563eb;
-            --text-color: #f3f4f6;
-            --text-muted: #9ca3af;
-            --border-color: #1f2937;
+       :root {
+            --bg-color: #ffffff;
+            --text-color: #111111;
+            --muted-color: #666666;
+            --border-color: #eeeeee;
         }
 
         * {
@@ -26,192 +23,164 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            line-height: 1.6;
+            padding: 40px 20px;
+            line-height: 1.5;
         }
 
-        a {
-            color: inherit;
-            text-decoration: none;
-        }
-
-        /* Container */
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
         }
 
-        /* Navigation */
-        nav {
+        /* Header / Nav */
+        header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
+            align-items: baseline;
+            padding-bottom: 30px;
             border-bottom: 1px solid var(--border-color);
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .logo span {
-            color: var(--accent-color);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 20px;
-            list-style: none;
-        }
-
-        .nav-links a:hover {
-            color: var(--accent-color);
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 100px 0 60px;
-            text-align: center;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            letter-spacing: -0.02em;
-        }
-
-        .hero h1 span {
-            color: var(--accent-color);
-        }
-
-        .hero p {
-            font-size: 1.25rem;
-            color: var(--text-muted);
-            max-width: 650px;
-            margin: 0 auto 30px;
-        }
-
-        .btn {
-            display: inline-block;
-            background-color: var(--accent-color);
-            color: #fff;
-            padding: 12px 28px;
-            border-radius: 6px;
-            font-weight: 600;
-            transition: background-color 0.2s ease;
-        }
-
-        .btn:hover {
-            background-color: var(--accent-hover);
-        }
-
-        /* Services Section */
-        .services {
-            padding: 60px 0;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2rem;
             margin-bottom: 40px;
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+        .site-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            letter-spacing: -0.02em;
         }
 
-        .card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 30px;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-color);
-        }
-
-        .card h3 {
-            font-size: 1.25rem;
-            margin-bottom: 12px;
-        }
-
-        .card p {
-            color: var(--text-muted);
+        nav a {
+            color: var(--muted-color);
+            text-decoration: none;
+            margin-left: 20px;
             font-size: 0.95rem;
         }
 
-        /* Footer */
-        footer {
-            border-top: 1px solid var(--border-color);
-            padding: 40px 0;
-            margin-top: 60px;
-            text-align: center;
-            color: var(--text-muted);
+        nav a:hover {
+            color: var(--text-color);
+        }
+
+        /* Intro Statement */
+        .intro {
+            max-width: 800px;
+            font-size: 1.25rem;
+            color: var(--muted-color);
+            margin-bottom: 50px;
+        }
+
+        /* Project Portfolio Grid */
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 40px 30px;
+        }
+
+        .project-card {
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .image-container {
+            width: 100%;
+            height: 240px;
+            background-color: #f4f4f4;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.2s ease;
+        }
+
+        .project-card:hover img {
+            opacity: 0.85;
+        }
+
+        .meta {
+            font-size: 0.8rem;
+            color: var(--muted-color);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 5px;
+        }
+
+        .project-title {
+            font-size: 1.2rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .excerpt {
             font-size: 0.9rem;
+            color: var(--muted-color);
+        }
+
+        footer {
+            margin-top: 80px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--muted-color);
+            font-size: 0.85rem;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <!-- Navigation -->
-        <nav>
-            <div class="logo">DX <span>SoftLab</span></div>
-            <ul class="nav-links">
-                <li><a href="#services">Services</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
+        <header>
+            <div class="site-title">DXARTS SoftLab</div>
+            <nav>
+                <a href="#about">About</a>
+                <a href="#people">People</a>
+                <a href="#publications">Publications</a>
+                <a href="#contact">Contact</a>
+            </nav>
+        </header>
 
-        <!-- Hero Section -->
-        <section class="hero">
-            <h1>Engineered for <span>Digital Excellence</span></h1>
-            <p>We craft custom software, high-performance web applications, and scalable digital solutions tailored to your business needs.</p>
-            <a href="#contact" class="btn">Get in Touch</a>
-        </section>
+        <p class="intro">
+            A research studio examining the role of workmanship, soft-circuits, e-textiles, and wearable technology in artistic practice.
+        </p>
 
-        <!-- Services Section -->
-        <section id="services" class="services">
-            <h2 class="section-title">Our Services</h2>
-            <div class="grid">
-                <div class="card">
-                    <h3>Web Development</h3>
-                    <p>Modern, responsive, and fast web applications built with cutting-edge technologies.</p>
+        <main class="portfolio-grid">
+            <!-- Project Item 1 -->
+            <a href="#" class="project-card">
+                <div class="image-container">
+                    <img src="https://via.placeholder.com/600x400" alt="Project preview">
                 </div>
-                <div class="card">
-                    <h3>Custom Software</h3>
-                    <p>Tailored enterprise software solutions designed to streamline your business operations.</p>
-                </div>
-                <div class="card">
-                    <h3>Cloud & DevOps</h3>
-                    <p>Scalable cloud infrastructure, automated CI/CD deployment pipelines, and architecture.</p>
-                </div>
-            </div>
-        </section>
+                <div class="meta">August 2026 • Research</div>
+                <h2 class="project-title">Elderberry Cyber Ritual</h2>
+                <p class="excerpt">An elderberry-based interface reflecting and archiving records of gifts as digital entries.</p>
+            </a>
 
-        <!-- Footer -->
-        <footer id="contact">
-            <p>&copy; 2026 DX SoftLab. All rights reserved.</p>
+            <!-- Project Item 2 -->
+            <a href="#" class="project-card">
+                <div class="image-container">
+                    <img src="https://via.placeholder.com/600x400" alt="Project preview">
+                </div>
+                <div class="meta">June 2026 • Textile Coding</div>
+                <h2 class="project-title">NameDraft Weaving</h2>
+                <p class="excerpt">Algorithmic translations of keywords into patterned textiles through code and craft methodologies.</p>
+            </a>
+
+            <!-- Project Item 3 -->
+            <a href="#" class="project-card">
+                <div class="image-container">
+                    <img src="https://via.placeholder.com/600x400" alt="Project preview">
+                </div>
+                <div class="meta">December 2025 • Wearables</div>
+                <h2 class="project-title">E-Textiles & Wearable Prototypes</h2>
+                <p class="excerpt">Exploration of interactive knitted tapestries and soft conductive fabric circuits.</p>
+            </a>
+        </main>
+
+        <footer>
+            <p>&copy; DXARTS SoftLab — Department of Digital Arts & Experimental Media</p>
         </footer>
     </div>
 
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ARUCAD-FoC</title>
-</head>
-<body>
-    <h1>Hello World</h1>
 </body>
 </html>
