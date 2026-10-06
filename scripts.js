@@ -51,16 +51,27 @@ function parseMarkdownFrontMatter(text) {
         return match ? match[1].trim() : "";
     };
 
+    let imagePath = getField("image");
+
+    // Clean leading slash if present
+    if (imagePath.startsWith('/')) {
+        imagePath = imagePath.substring(1);
+    }
+
+    // Ensure full relative path for GitHub Pages subfolder (/FoC/)
+    if (imagePath && !imagePath.startsWith('http')) {
+        imagePath = `https://rihardsvitols.github.io/FoC/${imagePath}`;
+    }
+
     return {
         title: getField("title") || "Untitled Project",
         author: getField("author") || "",
         date: getField("date") || "",
         category: getField("category") || "Uncategorized",
-        image: getField("image") || "",
+        image: imagePath,
         excerpt: getField("excerpt") || ""
     };
 }
-
 // Build and inject project cards into the DOM
 function renderProjects(projectsToDisplay) {
     const grid = document.getElementById('portfolio-grid');
