@@ -1,10 +1,19 @@
 // Configuration
 const username = "RihardsVitols";
 const repo = "FoC";
-let allProjects = [];
+
+let allProjects = [];      // Stores all projects loaded from GitHub
+let filteredProjects = []; // Stores projects matching the selected filter
+let visibleCount = 0;      // Number of projects currently displayed
+
+const INITIAL_LOAD = 9;   // First batch size
+const BATCH_LOAD = 3;     // Number of projects to load on scroll
+
+let observer; // IntersectionObserver instance
 
 // Initialize fetch process when DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
+    setupIntersectionObserver();
     fetchProjects();
 });
 
@@ -34,7 +43,8 @@ function fetchProjects() {
         .then(projects => {
             if (projects) {
                 allProjects = projects;
-                renderProjects(allProjects);
+                filteredProjects = [...allProjects]; // Default to all projects
+                resetAndRender();
             }
         })
         .catch(err => {
@@ -51,21 +61,15 @@ function parseMarkdownFrontMatter(text) {
         return match ? match[1].trim() : "";
     };
 
-    // Extract body (everything after the second '---' separator)
     const parts = text.split('---');
-    let bodyContent = "";
-    if (parts.length >= 3) {
-        bodyContent = parts.slice(2).join('---').trim();
-    }
+    let bodyContent = parts.length >= 3 ? parts.slice(2).join('---').trim() : "";
 
     let imagePath = getField("image");
 
-    // Clean leading slash if present
     if (imagePath.startsWith('/')) {
         imagePath = imagePath.substring(1);
     }
 
-    // Ensure full relative path for GitHub Pages subfolder (/FoC/)
     if (imagePath && !imagePath.startsWith('http')) {
         imagePath = `https://rihardsvitols.github.io/FoC/${imagePath}`;
     }
@@ -81,17 +85,28 @@ function parseMarkdownFrontMatter(text) {
     };
 }
 
-// Build and inject project cards into the DOM
-function renderProjects(projectsToDisplay) {
+// Reset grid view and load the initial 9 items
+function resetAndRender() {
     const grid = document.getElementById('portfolio-grid');
-    grid.innerHTML = ''; 
+    grid.innerHTML = '';
+    visibleCount = 0;
 
-    if (projectsToDisplay.length === 0) {
+    if (filteredProjects.length === 0) {
         renderMessage("No projects in this category.");
         return;
     }
 
-    projectsToDisplay.forEach((project, index) => {
+    // Load initial batch of 9 projects
+    loadMoreProjects(INITIAL_LOAD);
+}
+
+// Append the next batch of projects to the grid
+function loadMoreProjects(countToLoad) {
+    const grid = document.getElementById('portfolio-grid');
+    const nextBatch = filteredProjects.slice(visibleCount, visibleCount + countToLoad);
+
+    nextBatch.forEach((project) => {
+        const index = visibleCount;
         const card = document.createElement('div');
         card.className = 'project-card';
         
@@ -102,7 +117,6 @@ function renderProjects(projectsToDisplay) {
         const defaultImg = 'https://via.placeholder.com/600x400';
         const imgSrc = project.image || defaultImg;
 
-        // Render project details with expandable body section & clickable image
         card.innerHTML = `
             <div class="image-container">
                 <img src="${imgSrc}" alt="${project.title}" loading="lazy" onclick="openImageModal('${imgSrc}')">
@@ -119,7 +133,45 @@ function renderProjects(projectsToDisplay) {
             ` : ''}
         `;
         grid.appendChild(card);
+        visibleCount++;
     });
+
+    // Re-attach or remove the scroll trigger sentinel
+    updateSentinel();
+}
+
+// Set up Intersection Observer for infinite scrolling
+function setupIntersectionObserver() {
+    observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && visibleCount < filteredProjects.length) {
+                loadMoreProjects(BATCH_LOAD);
+            }
+        });
+    }, {
+        rootMargin: '200px' // Trigger loading 200px before reaching the exact bottom
+    });
+}
+
+// Add/move sentinel element to end of grid to trigger next load
+function updateSentinel() {
+    let sentinel = document.getElementById('scroll-sentinel');
+    
+    // Remove existing sentinel if present
+    if (sentinel) {
+        observer.unobserve(sentinel);
+        sentinel.remove();
+    }
+
+    // If there are more projects left to load, create a new sentinel at the end
+    if (visibleCount < filteredProjects.length) {
+        sentinel = document.createElement('div');
+        sentinel.id = 'scroll-sentinel';
+        sentinel.style.height = '10px';
+        sentinel.style.width = '100%';
+        document.getElementById('portfolio-grid').appendChild(sentinel);
+        observer.observe(sentinel);
+    }
 }
 
 // Open full-screen image overlay
@@ -156,20 +208,21 @@ function formatMarkdownBody(bodyText) {
         .replace(/\n/g, '<br>');
 }
 
-// Filter projects by category on button click
+// Filter projects by category
 function filterProjects(category, btnElement) {
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     btnElement.classList.add('active');
 
     if (category === 'ALL') {
-        renderProjects(allProjects);
+        filteredProjects = [...allProjects];
     } else {
-        const filtered = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
-        renderProjects(filtered);
+        filteredProjects = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
     }
+
+    resetAndRender();
 }
 
-// Render status / error messages in the grid
+// Render status / error messages in grid
 function renderMessage(message) {
     const grid = document.getElementById('portfolio-grid');
     grid.innerHTML = `<p class="loading-text">${message}</p>`;
