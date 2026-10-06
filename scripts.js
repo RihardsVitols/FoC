@@ -160,11 +160,12 @@ function loadMoreProjects(countToLoad) {
             <div class="image-container">
                 <img src="${imgSrc}" alt="${project.title}" loading="lazy" onclick="openImageModal('${imgSrc}')">
             </div>
+
+            ${project.video ? renderVideoEmbed(project.video) : ''}
+            
             <div class="meta">${metaText}</div>
             <h2 class="project-title">${project.title}</h2>
             <p class="excerpt">${project.excerpt}</p>
-
-            ${project.video ? renderVideoEmbed(project.video) : ''}
             
             ${project.body ? `
                 <button class="toggle-btn" onclick="toggleDetails(${index})">Read Full Details</button>
