@@ -1,0 +1,23 @@
+backend:
+  name: github
+  repo: RihardsVitols/FoC
+  branch: main # or master
+
+# Where uploaded project images will be stored
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "projects"
+    label: "Student Projects"
+    folder: "content/projects"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Student Name / Author", name: "author", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Category", name: "category", widget: "select", options: ["Research", "E-Textiles", "Wearables", "Digital Craft"] }
+      - { label: "Cover Image", name: "image", widget: "image" }
+      - { label: "Short Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Full Project Details", name: "body", widget: "markdown" }
