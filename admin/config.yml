@@ -4,13 +4,12 @@ backend:
   branch: main
   base_url: https://decap-oauth.vercel.app
 
-# Where uploaded project images will be stored
 media_folder: "images/uploads"
-public_folder: "images/uploads" # Relative path so images load on GitHub Pages
+public_folder: "images/uploads"
 
 collections:
-  - name: "projects"
-    label: "Student Projects"
+  - name: "vcd_projects"
+    label: "VCD Projects"
     folder: "content/projects"
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
@@ -18,7 +17,35 @@ collections:
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Student Name / Author", name: "author", widget: "string" }
       - { label: "Date", name: "date", widget: "datetime" }
-      - { label: "Category", name: "category", widget: "select", options: ["VCD", "GAME", "NMC"] }
+      - { label: "Category", name: "category", widget: "hidden", default: "VCD" }
+      - { label: "Cover Image", name: "image", widget: "image" }
+      - { label: "Short Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Full Project Details", name: "body", widget: "markdown" }
+
+  - name: "game_projects"
+    label: "GAME Projects"
+    folder: "content/projects"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Student Name / Author", name: "author", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Category", name: "category", widget: "hidden", default: "GAME" }
+      - { label: "Cover Image", name: "image", widget: "image" }
+      - { label: "Short Excerpt", name: "excerpt", widget: "text" }
+      - { label: "Full Project Details", name: "body", widget: "markdown" }
+
+  - name: "nmc_projects"
+    label: "NMC Projects"
+    folder: "content/projects"
+    create: true
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Student Name / Author", name: "author", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Category", name: "category", widget: "hidden", default: "NMC" }
       - { label: "Cover Image", name: "image", widget: "image" }
       - { label: "Short Excerpt", name: "excerpt", widget: "text" }
       - { label: "Full Project Details", name: "body", widget: "markdown" }
