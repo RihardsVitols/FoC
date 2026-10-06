@@ -173,18 +173,19 @@ function updateSentinel() {
         observer.observe(sentinel);
     }
 }
-
-// Open full-screen image overlay
+// Open full-screen image overlay (and lock mobile background scroll)
 function openImageModal(imageSrc) {
     const modal = document.getElementById('imageModal');
     const modalImg = document.getElementById('modalImage');
     modalImg.src = imageSrc;
     modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden'; // Prevents scrolling background on mobile
 }
 
-// Close full-screen image overlay
+// Close full-screen image overlay (and restore scroll)
 function closeImageModal() {
     document.getElementById('imageModal').style.display = 'none';
+    document.body.style.overflow = 'auto'; // Restores normal page scrolling
 }
 
 // Toggle full project description visibility
