@@ -157,9 +157,11 @@ function loadMoreProjects(countToLoad) {
         const imgSrc = project.image || defaultImg;
 
         card.innerHTML = `
-            <div class="image-container">
-                <img src="${imgSrc}" alt="${project.title}" loading="lazy" onclick="openImageModal('${imgSrc}')">
-            </div>
+            ${project.image ? `
+                <div class="image-container">
+                    <img src="${project.image}" alt="${project.title}" loading="lazy" onclick="openImageModal('${project.image}')">
+                </div>
+            ` : ''}
 
             ${project.video ? renderVideoEmbed(project.video) : ''}
             
