@@ -1,6 +1,5 @@
 backend:
-  name: github
-  repo: RihardsVitols/FoC
+  name: git-gateway
   branch: main # or master
 
 # Where uploaded project images will be stored
