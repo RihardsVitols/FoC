@@ -42,8 +42,13 @@ function fetchProjects() {
         })
         .then(projects => {
             if (projects) {
-                allProjects = projects;
-                filteredProjects = [...allProjects]; // Default to all projects
+                // Sort projects by raw ISO date string: newest first
+                allProjects = projects.sort((a, b) => {
+                    const dateA = a.rawDate ? new Date(a.rawDate) : 0;
+                    const dateB = b.rawDate ? new Date(b.rawDate) : 0;
+                    return dateB - dateA;
+                });
+                filteredProjects = [...allProjects];
                 resetAndRender();
             }
         })
@@ -74,13 +79,17 @@ function parseMarkdownFrontMatter(text) {
         imagePath = `https://rihardsvitols.github.io/FoC/${imagePath}`;
     }
 
+    const rawDate = getField("date");
+    const yearOnly = rawDate ? rawDate.substring(0, 4) : "";
+    
     return {
         title: getField("title") || "Untitled Project",
         author: getField("author") || "",
-        date: getField("date") || "",
+        rawDate: rawDate,   // Kept for accurate chronological sorting
+        date: yearOnly,     // Only 4-digit year for visual rendering
         category: getField("category") || "Uncategorized",
         image: imagePath,
-        video: getField("video") || "", // Extract video URL
+        video: getField("video") || "",
         excerpt: getField("excerpt") || "",
         body: bodyContent
     };
@@ -149,12 +158,13 @@ function loadMoreProjects(countToLoad) {
         const card = document.createElement('div');
         card.className = 'project-card';
         
-        const metaText = project.author 
-            ? `${project.author} • ${project.category}` 
-            : project.category;
+        // Build metadata dynamically (Author • Category • Year)
+        const metaParts = [];
+        if (project.author) metaParts.push(project.author);
+        if (project.category) metaParts.push(project.category);
+        if (project.date) metaParts.push(project.date);
 
-        const defaultImg = 'https://via.placeholder.com/600x400';
-        const imgSrc = project.image || defaultImg;
+        const metaText = metaParts.join(" • ");
 
         card.innerHTML = `
             ${project.image ? `
@@ -217,6 +227,7 @@ function updateSentinel() {
         observer.observe(sentinel);
     }
 }
+
 // Open full-screen image overlay (and lock mobile background scroll)
 function openImageModal(imageSrc) {
     const modal = document.getElementById('imageModal');
@@ -246,9 +257,16 @@ function toggleDetails(index) {
     }
 }
 
-// Helper to convert line breaks in Markdown body
+// Helper to convert Markdown links, raw URLs, and line breaks
 function formatMarkdownBody(bodyText) {
+    if (!bodyText) return "";
+
     return bodyText
+        // Convert Markdown links [text](url)
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
+        // Convert raw plain URLs
+        .replace(/(^|[^"'])((https?:\/\/[^\s<]+))/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$2</a>')
+        // Convert line breaks
         .replace(/\n\n/g, '<br><br>')
         .replace(/\n/g, '<br>');
 }
