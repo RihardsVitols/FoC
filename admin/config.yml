@@ -16,7 +16,7 @@ collections:
     fields:
       - { label: "Title and Year", name: "title", widget: "string" }
       - { label: "Student Name / Author", name: "author", widget: "string" }
-      # - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Category", name: "category", widget: "hidden", default: "VCD" }
       - { label: "Cover Image", name: "image", widget: "image", required: false }
       - { label: "Video URL (YouTube, Vimeo, or MP4)", name: "video", widget: "string", required: false }
@@ -34,7 +34,7 @@ collections:
     fields:
       - { label: "Title and Year", name: "title", widget: "string" }
       - { label: "Student Name / Author", name: "author", widget: "string" }
-      # - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Category", name: "category", widget: "hidden", default: "GAME" }
       - { label: "Cover Image", name: "image", widget: "image", required: false }
       - { label: "Video URL (YouTube, Vimeo, or MP4)", name: "video", widget: "string", required: false }
@@ -52,7 +52,7 @@ collections:
     fields:
       - { label: "Title and Year", name: "title", widget: "string" }
       - { label: "Student Name / Author", name: "author", widget: "string" }
-      # - { label: "Date", name: "date", widget: "datetime" }
+      - { label: "Date", name: "date", widget: "datetime" }
       - { label: "Category", name: "category", widget: "hidden", default: "NMC" }
       - { label: "Cover Image", name: "image", widget: "image", required: false }
       - { label: "Video URL (YouTube, Vimeo, or MP4)", name: "video", widget: "string", required: false }
