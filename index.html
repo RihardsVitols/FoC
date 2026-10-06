@@ -5,8 +5,52 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARUCAD | Faculty of Communication</title>
 
-    <!-- Link your external CSS file here -->
+    <!-- Link external CSS -->
     <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Lightbox Modal Overlay Styles */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .image-modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            object-fit: contain;
+        }
+
+        .image-modal .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: #fff;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .image-container img {
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        .image-container img:hover {
+            opacity: 0.85;
+        }
+    </style>
 </head>
 <body>
 
@@ -30,145 +74,13 @@
         </footer>
     </div>
 
-    <!-- Decap CMS Fetch & Filter Script -->
-    <script>
-        const username = "RihardsVitols";
-        const repo = "FoC";
-        let allProjects = [];
+    <!-- Image Lightbox Modal Overlay -->
+    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
+        <span class="close-btn">&times;</span>
+        <img id="modalImage" src="" alt="Full size project view">
+    </div>
 
-        // Fetch project files from GitHub
-        fetch(`https://api.github.com/repos/${username}/${repo}/contents/content/projects`)
-            .then(res => {
-                if (!res.ok) throw new Error("No content directory found");
-                return res.json();
-            })
-            .then(files => {
-                const mdFiles = files.filter(f => f.name.endsWith('.md'));
-                
-                if (mdFiles.length === 0) {
-                    document.getElementById('portfolio-grid').innerHTML = '<p class="loading-text">No published projects yet.</p>';
-                    return;
-                }
-
-                const fetchPromises = mdFiles.map(file =>
-                    fetch(file.download_url)
-                        .then(res => res.text())
-                        .then(text => {
-                            // Helper to extract YAML front-matter fields
-                            const getField = (field) => {
-                                const regex = new RegExp(`${field}:\\s*["']?(.*?)["']?\\s*$`, 'm');
-                                const match = text.match(regex);
-                                return match ? match[1].trim() : "";
-                            };
-
-                            // Extract body content (everything after second '---')
-                            const parts = text.split('---');
-                            let bodyContent = parts.length >= 3 ? parts.slice(2).join('---').trim() : "";
-
-                            // Fix relative image paths for GitHub Pages subfolder (/FoC/)
-                            let imagePath = getField("image");
-                            if (imagePath.startsWith('/')) {
-                                imagePath = imagePath.substring(1);
-                            }
-                            if (imagePath && !imagePath.startsWith('http')) {
-                                imagePath = `https://rihardsvitols.github.io/FoC/${imagePath}`;
-                            }
-
-                            return {
-                                title: getField("title") || "Untitled Project",
-                                author: getField("author") || "",
-                                date: getField("date") || "",
-                                category: getField("category") || "Uncategorized",
-                                image: imagePath,
-                                excerpt: getField("excerpt") || "",
-                                body: bodyContent
-                            };
-                        })
-                );
-
-                return Promise.all(fetchPromises);
-            })
-            .then(projects => {
-                if (projects) {
-                    allProjects = projects;
-                    renderProjects(allProjects);
-                }
-            })
-            .catch(err => {
-                console.error("Error loading projects:", err);
-                document.getElementById('portfolio-grid').innerHTML = '<p class="loading-text">No projects published in content/projects yet.</p>';
-            });
-
-        // Function to build and output HTML cards
-        function renderProjects(projectsToDisplay) {
-            const grid = document.getElementById('portfolio-grid');
-            grid.innerHTML = ''; 
-
-            if (projectsToDisplay.length === 0) {
-                grid.innerHTML = '<p class="loading-text">No projects in this category.</p>';
-                return;
-            }
-
-            projectsToDisplay.forEach((project, index) => {
-                const card = document.createElement('div');
-                card.className = 'project-card';
-                
-                const metaText = project.author 
-                    ? `${project.author} • ${project.category}` 
-                    : project.category;
-
-                card.innerHTML = `
-                    <div class="image-container">
-                        <img src="${project.image || 'https://via.placeholder.com/600x400'}" alt="${project.title}" loading="lazy">
-                    </div>
-                    <div class="meta">${metaText}</div>
-                    <h2 class="project-title">${project.title}</h2>
-                    <p class="excerpt">${project.excerpt}</p>
-                    
-                    ${project.body ? `
-                        <button class="toggle-btn" onclick="toggleDetails(${index})">Read Full Details</button>
-                        <div id="details-${index}" class="full-details" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-                            ${formatMarkdownBody(project.body)}
-                        </div>
-                    ` : ''}
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        // Toggle full description visibility
-        function toggleDetails(index) {
-            const detailsDiv = document.getElementById(`details-${index}`);
-            const btn = detailsDiv.previousElementSibling;
-            
-            if (detailsDiv.style.display === "none") {
-                detailsDiv.style.display = "block";
-                btn.innerText = "Hide Details";
-            } else {
-                detailsDiv.style.display = "none";
-                btn.innerText = "Read Full Details";
-            }
-        }
-
-        // Simple helper to render line breaks in body text
-        function formatMarkdownBody(bodyText) {
-            return bodyText
-                .replace(/\n\n/g, '<br><br>')
-                .replace(/\n/g, '<br>');
-        }
-
-        // Function to filter grid on button click
-        function filterProjects(category, btnElement) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
-
-            if (category === 'ALL') {
-                renderProjects(allProjects);
-            } else {
-                const filtered = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
-                renderProjects(filtered);
-            }
-        }
-    </script>
+    <!-- Link External JavaScript -->
+    <script src="scripts.js"></script>
 </body>
 </html>
