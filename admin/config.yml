@@ -1,6 +1,9 @@
 backend:
-  name: git-gateway
+  # name: git-gateway
+  name: github
+  repo: RihardsVitols/FoC
   branch: main # or master
+  base_url: https://decap-oauth.vercel.app
 
 # Where uploaded project images will be stored
 media_folder: "images/uploads"
