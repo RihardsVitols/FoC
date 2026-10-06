@@ -99,10 +99,13 @@ function renderProjects(projectsToDisplay) {
             ? `${project.author} • ${project.category}` 
             : project.category;
 
-        // Render project details with expandable body section
+        const defaultImg = 'https://via.placeholder.com/600x400';
+        const imgSrc = project.image || defaultImg;
+
+        // Render project details with expandable body section & clickable image
         card.innerHTML = `
             <div class="image-container">
-                <img src="${project.image || 'https://via.placeholder.com/600x400'}" alt="${project.title}" loading="lazy">
+                <img src="${imgSrc}" alt="${project.title}" loading="lazy" onclick="openImageModal('${imgSrc}')">
             </div>
             <div class="meta">${metaText}</div>
             <h2 class="project-title">${project.title}</h2>
@@ -119,6 +122,19 @@ function renderProjects(projectsToDisplay) {
     });
 }
 
+// Open full-screen image overlay
+function openImageModal(imageSrc) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modalImg.src = imageSrc;
+    modal.style.display = 'flex';
+}
+
+// Close full-screen image overlay
+function closeImageModal() {
+    document.getElementById('imageModal').style.display = 'none';
+}
+
 // Toggle full project description visibility
 function toggleDetails(index) {
     const detailsDiv = document.getElementById(`details-${index}`);
@@ -133,7 +149,7 @@ function toggleDetails(index) {
     }
 }
 
-// Simple helper to convert line breaks and basic formatting in Markdown body
+// Helper to convert line breaks in Markdown body
 function formatMarkdownBody(bodyText) {
     return bodyText
         .replace(/\n\n/g, '<br><br>')
