@@ -14,7 +14,7 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - { label: "Title and Year", name: "title", widget: "string" }
+      - { label: "Title", name: "title", widget: "string" }
       - { label: "Student Name / Author", name: "author", widget: "string" }
       - { label: "Date created", name: "date", widget: "datetime", format: "YYYY", dateFormat: "YYYY", timeFormat: false }
       - { label: "Category", name: "category", widget: "hidden", default: "VCD" }
@@ -32,7 +32,7 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - { label: "Title and Year", name: "title", widget: "string" }
+      - { label: "Title", name: "title", widget: "string" }
       - { label: "Student Name / Author", name: "author", widget: "string" }
       - { label: "Date created", name: "date", widget: "datetime", format: "YYYY", dateFormat: "YYYY", timeFormat: false }
       - { label: "Category", name: "category", widget: "hidden", default: "GAME" }
@@ -50,7 +50,7 @@ collections:
     create: true
     slug: "{{year}}-{{month}}-{{day}}-{{slug}}"
     fields:
-      - { label: "Title and Year", name: "title", widget: "string" }
+      - { label: "Title", name: "title", widget: "string" }
       - { label: "Student Name / Author", name: "author", widget: "string" }
       - { label: "Date created", name: "date", widget: "datetime", format: "YYYY", dateFormat: "YYYY", timeFormat: false }
       - { label: "Category", name: "category", widget: "hidden", default: "NMC" }
