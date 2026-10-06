@@ -54,20 +54,34 @@
                     fetch(file.download_url)
                         .then(res => res.text())
                         .then(text => {
-                            // Extracts YAML fields regardless of quote formatting
+                            // Helper to extract YAML front-matter fields
                             const getField = (field) => {
                                 const regex = new RegExp(`${field}:\\s*["']?(.*?)["']?\\s*$`, 'm');
                                 const match = text.match(regex);
                                 return match ? match[1].trim() : "";
                             };
 
+                            // Extract body content (everything after second '---')
+                            const parts = text.split('---');
+                            let bodyContent = parts.length >= 3 ? parts.slice(2).join('---').trim() : "";
+
+                            // Fix relative image paths for GitHub Pages subfolder (/FoC/)
+                            let imagePath = getField("image");
+                            if (imagePath.startsWith('/')) {
+                                imagePath = imagePath.substring(1);
+                            }
+                            if (imagePath && !imagePath.startsWith('http')) {
+                                imagePath = `https://rihardsvitols.github.io/FoC/${imagePath}`;
+                            }
+
                             return {
                                 title: getField("title") || "Untitled Project",
                                 author: getField("author") || "",
                                 date: getField("date") || "",
                                 category: getField("category") || "Uncategorized",
-                                image: getField("image") || "",
-                                excerpt: getField("excerpt") || ""
+                                image: imagePath,
+                                excerpt: getField("excerpt") || "",
+                                body: bodyContent
                             };
                         })
                 );
@@ -95,12 +109,10 @@
                 return;
             }
 
-            projectsToDisplay.forEach(project => {
-                const card = document.createElement('a');
-                card.href = "#";
+            projectsToDisplay.forEach((project, index) => {
+                const card = document.createElement('div');
                 card.className = 'project-card';
                 
-                // Formats metadata line (Author / Category)
                 const metaText = project.author 
                     ? `${project.author} • ${project.category}` 
                     : project.category;
@@ -112,9 +124,37 @@
                     <div class="meta">${metaText}</div>
                     <h2 class="project-title">${project.title}</h2>
                     <p class="excerpt">${project.excerpt}</p>
+                    
+                    ${project.body ? `
+                        <button class="toggle-btn" onclick="toggleDetails(${index})">Read Full Details</button>
+                        <div id="details-${index}" class="full-details" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                            ${formatMarkdownBody(project.body)}
+                        </div>
+                    ` : ''}
                 `;
                 grid.appendChild(card);
             });
+        }
+
+        // Toggle full description visibility
+        function toggleDetails(index) {
+            const detailsDiv = document.getElementById(`details-${index}`);
+            const btn = detailsDiv.previousElementSibling;
+            
+            if (detailsDiv.style.display === "none") {
+                detailsDiv.style.display = "block";
+                btn.innerText = "Hide Details";
+            } else {
+                detailsDiv.style.display = "none";
+                btn.innerText = "Read Full Details";
+            }
+        }
+
+        // Simple helper to render line breaks in body text
+        function formatMarkdownBody(bodyText) {
+            return bodyText
+                .replace(/\n\n/g, '<br><br>')
+                .replace(/\n/g, '<br>');
         }
 
         // Function to filter grid on button click
