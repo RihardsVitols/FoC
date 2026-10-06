@@ -151,3 +151,25 @@ footer {
     grid-column: 1 / -1;
     padding: 30px 0;
 }
+
+.toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border-color, #ccc);
+    color: var(--text-color, #333);
+    padding: 6px 12px;
+    margin-top: 10px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+    background-color: var(--text-color, #333);
+    color: #fff;
+}
+
+.full-details {
+    line-height: 1.6;
+    font-size: 0.9rem;
+}
