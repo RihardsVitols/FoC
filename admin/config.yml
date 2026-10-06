@@ -10,9 +10,9 @@ media_folder: "images/uploads"
 public_folder: "/images/uploads"
 
 collections:
-  - name: "projects"
+  # - name: "projects"
     # label: "VCD"
-    label: "Category"
+  - label: "Category"
     name: "category"
     widget: "select"
     options: ["VCD", "GAME", "NMC"]
