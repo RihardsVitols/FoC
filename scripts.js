@@ -80,9 +80,48 @@ function parseMarkdownFrontMatter(text) {
         date: getField("date") || "",
         category: getField("category") || "Uncategorized",
         image: imagePath,
+        video: getField("video") || "", // Extract video URL
         excerpt: getField("excerpt") || "",
         body: bodyContent
     };
+}
+
+function renderVideoEmbed(url) {
+    if (!url) return "";
+
+    // YouTube link handling
+    const youtubeMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
+    if (youtubeMatch) {
+        return `
+            <div class="video-container">
+                <iframe src="https://www.youtube-nocookie.com/embed/${youtubeMatch[1]}" 
+                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen></iframe>
+            </div>`;
+    }
+
+    // Vimeo link handling
+    const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
+    if (vimeoMatch) {
+        return `
+            <div class="video-container">
+                <iframe src="https://player.vimeo.com/video/${vimeoMatch[1]}" 
+                        frameborder="0" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>
+            </div>`;
+    }
+
+    // Direct MP4 video file handling
+    if (url.match(/\.(mp4|webm|ogg)$/i)) {
+        return `
+            <div class="video-container">
+                <video controls preload="metadata" style="width:100%; height:auto; border-radius:4px;">
+                    <source src="${url}">
+                    Your browser does not support HTML5 video.
+                </video>
+            </div>`;
+    }
+
+    return "";
 }
 
 // Reset grid view and load the initial 9 items
@@ -124,6 +163,8 @@ function loadMoreProjects(countToLoad) {
             <div class="meta">${metaText}</div>
             <h2 class="project-title">${project.title}</h2>
             <p class="excerpt">${project.excerpt}</p>
+
+            ${project.video ? renderVideoEmbed(project.video) : ''}
             
             ${project.body ? `
                 <button class="toggle-btn" onclick="toggleDetails(${index})">Read Full Details</button>
