@@ -115,3 +115,39 @@ footer {
     color: var(--muted-color);
     font-size: 0.85rem;
 }
+
+/* Filter Navigation Buttons */
+.filter-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.filter-btn {
+    background: none;
+    border: none;
+    color: var(--muted-color, #777);
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 4px 8px;
+    transition: color 0.2s ease;
+}
+
+.filter-btn:hover {
+    color: var(--text-color, #000);
+}
+
+.filter-btn.active {
+    color: var(--text-color, #000);
+    font-weight: 700;
+    border-bottom: 2px solid var(--text-color, #000);
+}
+
+/* Loading Placeholder Text */
+.loading-text {
+    color: var(--muted-color, #777);
+    font-size: 0.95rem;
+    grid-column: 1 / -1;
+    padding: 30px 0;
+}
