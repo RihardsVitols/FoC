@@ -46,14 +46,14 @@ header {
     /* display: flex; */
     /* align-items: center; */
     /* gap: 12px; /* Space between logo and text */ */
-    font-size: 1.5rem;
+    font-size: 3.5rem;
     font-weight: bold;
     color: #000;
 }
 
 /* Control logo sizing */
 .site-logo {
-    height: 60px; /* Adjust height to fit your design */
+    height: 50px; /* Adjust height to fit your design */
     width: auto;  /* Maintains aspect ratio */
     /* object-fit: contain;*/
     display: block;
