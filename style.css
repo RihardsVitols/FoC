@@ -33,10 +33,31 @@ header {
     margin-bottom: 40px;
 }
 
+/* Align site title and logo inline */
 .site-title {
-    font-size: 1.8rem;
-    font-weight: 600;
-    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+    gap: 12px; /* Space between logo and text */
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Control logo sizing */
+.site-logo {
+    height: 40px; /* Adjust height to fit your design */
+    width: auto;  /* Maintains aspect ratio */
+    object-fit: contain;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .site-title {
+        font-size: 1.2rem;
+    }
+    
+    .site-logo {
+        height: 32px; /* Slightly smaller logo on mobile */
+    }
 }
 
 nav a {
