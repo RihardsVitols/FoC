@@ -41,13 +41,12 @@ header {
     gap: 15px; /* Adjust gap between logo and text here */
 }
 
-/* Site Title Text Styling */
+/* Align site title and logo inline */
 .site-title {
-    font-size: 2.2rem; /* Clean large text size */
-    font-weight: 700;
-    color: #111111;
-    line-height: 1.1;
-    white-space: nowrap; /* Prevents awkward line breaking on desktop */
+    font-size: 2.5rem !important;
+    font-weight: bold;
+    color: #000;
+    line-height: 1.2;
 }
 
 /* Logo Sizing to match large text */
