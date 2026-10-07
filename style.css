@@ -34,40 +34,38 @@ header {
     margin-bottom: 40px;
 }
 
-/* Groups the logo & text tightly together */
+/* Container keeping logo & text together on the left */
 .brand {
     display: flex;
     align-items: center;
-    gap: 10px; /* Tight gap between logo and text — adjust value as needed */
+    gap: 15px; /* Adjust gap between logo and text here */
 }
 
-/* Align site title and logo inline */
+/* Site Title Text Styling */
 .site-title {
-    /* display: flex; */
-    /* align-items: center; */
-    /* gap: 12px; /* Space between logo and text */ */
-    font-size: 2.5rem;
-    font-weight: bold;
-    color: #000;
-    line-height: 1.2;
+    font-size: 2.2rem; /* Clean large text size */
+    font-weight: 700;
+    color: #111111;
+    line-height: 1.1;
+    white-space: nowrap; /* Prevents awkward line breaking on desktop */
 }
 
-/* Control logo sizing */
+/* Logo Sizing to match large text */
 .site-logo {
-    height: 50px; /* Adjust height to fit your design */
-    width: auto;  /* Maintains aspect ratio */
-    /* object-fit: contain;*/
+    height: 52px; /* Set height to proportionally match the large font */
+    width: auto;
     display: block;
 }
 
-/* Mobile adjustments */
+/* Mobile adjustments so large title doesn't overflow phone screens */
 @media (max-width: 768px) {
     .site-title {
-        font-size: 1.2rem;
+        font-size: 1.3rem;
+        white-space: normal;
     }
     
     .site-logo {
-        height: 32px; /* Slightly smaller logo on mobile */
+        height: 36px;
     }
 }
 
