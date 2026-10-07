@@ -27,26 +27,36 @@ body {
 header {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: center;
+    /* align-items: baseline; */
     padding-bottom: 30px;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 40px;
 }
 
-/* Align site title and logo inline */
-.site-title {
+/* Groups the logo & text tightly together */
+.brand {
     display: flex;
     align-items: center;
-    gap: 12px; /* Space between logo and text */
+    gap: 10px; /* Tight gap between logo and text — adjust value as needed */
+}
+
+/* Align site title and logo inline */
+.site-title {
+    /* display: flex; */
+    /* align-items: center; */
+    /* gap: 12px; /* Space between logo and text */ */
     font-size: 1.5rem;
     font-weight: bold;
+    color: #000;
 }
 
 /* Control logo sizing */
 .site-logo {
     height: 40px; /* Adjust height to fit your design */
     width: auto;  /* Maintains aspect ratio */
-    object-fit: contain;
+    /* object-fit: contain;*/
+    display: block;
 }
 
 /* Mobile adjustments */
