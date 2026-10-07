@@ -53,7 +53,7 @@ header {
 
 /* Control logo sizing */
 .site-logo {
-    height: 40px; /* Adjust height to fit your design */
+    height: 600px; /* Adjust height to fit your design */
     width: auto;  /* Maintains aspect ratio */
     /* object-fit: contain;*/
     display: block;
