@@ -2,22 +2,30 @@
 const username = "RihardsVitols";
 const repo = "FoC";
 
-let allProjects = [];      // Stores all projects loaded from GitHub
-let filteredProjects = []; // Stores projects matching the selected filter
-let visibleCount = 0;      // Number of projects currently displayed
+let allProjects = [];      
+let filteredProjects = []; 
+let visibleCount = 0;      
 
-const INITIAL_LOAD = 9;   // First batch size
-const BATCH_LOAD = 3;     // Number of projects to load on scroll
+const INITIAL_LOAD = 9;   
+const BATCH_LOAD = 3;     
 
-let observer; // IntersectionObserver instance
+let observer; 
 
-// Initialize fetch process when DOM is fully loaded
 document.addEventListener("DOMContentLoaded", () => {
     setupIntersectionObserver();
     fetchProjects();
+    
+    // Bind Fancybox 5 configuration
+    Fancybox.bind("[data-fancybox]", {
+        iframe: {
+            preload: false,
+            attr: {
+                scrolling: "auto"
+            }
+        }
+    });
 });
 
-// Fetch project Markdown files from GitHub API
 function fetchProjects() {
     fetch(`https://api.github.com/repos/${username}/${repo}/contents/content/projects`)
         .then(res => {
@@ -57,7 +65,6 @@ function fetchProjects() {
         });
 }
 
-// Parse YAML front-matter and body content from Markdown string safely
 function parseMarkdownFrontMatter(text) {
     const getField = (field) => {
         const regex = new RegExp(`${field}:\\s*["']?(.*?)["']?\\s*$`, 'm');
@@ -68,7 +75,6 @@ function parseMarkdownFrontMatter(text) {
     const parts = text.split('---');
     let bodyContent = parts.length >= 3 ? parts.slice(2).join('---').trim() : "";
 
-    // Image Path Formatting
     let imagePath = getField("image");
     if (imagePath) {
         if (imagePath.startsWith('/')) imagePath = imagePath.substring(1);
@@ -77,7 +83,6 @@ function parseMarkdownFrontMatter(text) {
         }
     }
 
-    // PDF Path Formatting
     let pdfPath = getField("pdf");
     if (pdfPath) {
         if (pdfPath.startsWith('/')) pdfPath = pdfPath.substring(1);
@@ -103,7 +108,6 @@ function parseMarkdownFrontMatter(text) {
     };
 }
 
-// Render Video Embed
 function renderVideoEmbed(url) {
     if (!url) return "";
 
@@ -139,21 +143,20 @@ function renderVideoEmbed(url) {
     return "";
 }
 
-// Render PDF Document Thumbnail (Clickable to Lightbox)
+// Render PDF Card Thumbnail configured for Fancybox
 function renderPdfThumbnail(pdfUrl, title) {
     if (!pdfUrl) return "";
 
     return `
-        <div class="pdf-container pdf-thumbnail" onclick="openPdfModal('${pdfUrl}')">
+        <a href="${pdfUrl}" data-fancybox="gallery" data-type="pdf" data-caption="${title}" class="pdf-container pdf-thumbnail">
             <div class="pdf-card-preview">
                 <span class="pdf-icon">📄</span>
-                <span class="pdf-label">Click to Preview Document</span>
+                <span class="pdf-label">Click to Read PDF</span>
                 <span class="pdf-sublabel">${title}</span>
             </div>
-        </div>`;
+        </a>`;
 }
 
-// Reset grid view and load initial items
 function resetAndRender() {
     const grid = document.getElementById('portfolio-grid');
     grid.innerHTML = '';
@@ -167,7 +170,6 @@ function resetAndRender() {
     loadMoreProjects(INITIAL_LOAD);
 }
 
-// Append next batch of projects to grid
 function loadMoreProjects(countToLoad) {
     const grid = document.getElementById('portfolio-grid');
     const nextBatch = filteredProjects.slice(visibleCount, visibleCount + countToLoad);
@@ -184,12 +186,13 @@ function loadMoreProjects(countToLoad) {
 
         const metaText = metaParts.join(" • ");
 
-        // Media display selection logic
         let mediaHTML = "";
         if (project.image) {
             mediaHTML = `
                 <div class="image-container">
-                    <img src="${project.image}" alt="${project.title}" loading="lazy" onclick="openImageModal('${project.image}')">
+                    <a href="${project.image}" data-fancybox="gallery" data-caption="${project.title}">
+                        <img src="${project.image}" alt="${project.title}" loading="lazy">
+                    </a>
                 </div>`;
         } else if (project.video) {
             mediaHTML = renderVideoEmbed(project.video);
@@ -205,7 +208,7 @@ function loadMoreProjects(countToLoad) {
             <p class="excerpt">${project.excerpt}</p>
 
             ${project.pdf && (project.image || project.video) ? `
-                <button onclick="openPdfModal('${project.pdf}')" class="pdf-link-btn" style="background:none; border:none; padding:0; cursor:pointer; margin-top: 5px; font-size: 0.85rem; color: #0066cc; text-decoration: underline; display: inline-block;">📄 View Attached PDF</button>
+                <a href="${project.pdf}" data-fancybox="gallery" data-type="pdf" data-caption="${project.title}" class="pdf-link-btn" style="margin-top: 5px; font-size: 0.85rem; color: #0066cc; text-decoration: underline; display: inline-block;">📄 View Attached PDF</a>
             ` : ''}
             
             ${project.body ? `
@@ -249,38 +252,6 @@ function updateSentinel() {
         document.getElementById('portfolio-grid').appendChild(sentinel);
         observer.observe(sentinel);
     }
-}
-
-// Lightbox: Image Modal
-function openImageModal(imageSrc) {
-    const modal = document.getElementById('mediaModal');
-    const container = document.getElementById('modalContentContainer');
-    container.innerHTML = `<img src="${imageSrc}" alt="Full size project image">`;
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-// Lightbox: PDF Document Modal
-function openPdfModal(pdfUrl) {
-    const modal = document.getElementById('mediaModal');
-    const container = document.getElementById('modalContentContainer');
-    // #view=FitH forces the PDF engine to expand text to fill container width
-    container.innerHTML = `
-        <iframe src="${pdfUrl}#view=FitH" type="application/pdf" style="width: 100%; height: 100%; border: none; border-radius: 8px; background: #fff;">
-            <p>Your browser does not support inline PDFs. <a href="${pdfUrl}" target="_blank">Download PDF</a></p>
-        </iframe>`;
-    
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden';
-}
-
-// Close Modal
-function closeModal() {
-    const modal = document.getElementById('mediaModal');
-    const container = document.getElementById('modalContentContainer');
-    modal.style.display = 'none';
-    container.innerHTML = ''; // Stops iframe background memory usage
-    document.body.style.overflow = 'auto';
 }
 
 function toggleDetails(index) {
