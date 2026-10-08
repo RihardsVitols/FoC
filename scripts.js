@@ -15,8 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
     setupIntersectionObserver();
     fetchProjects();
     
-    // Bind Fancybox 5 configuration
+    // Bind Fancybox 5 with isolated items and disabled arrows
     Fancybox.bind("[data-fancybox]", {
+        infinite: false,
+        Navigation: false, // Disables previous/next arrows
         iframe: {
             preload: false,
             attr: {
@@ -143,12 +145,12 @@ function renderVideoEmbed(url) {
     return "";
 }
 
-// Render PDF Card Thumbnail configured for Fancybox
-function renderPdfThumbnail(pdfUrl, title) {
+// Render PDF Card Thumbnail configured for a single standalone item
+function renderPdfThumbnail(pdfUrl, title, index) {
     if (!pdfUrl) return "";
 
     return `
-        <a href="${pdfUrl}" data-fancybox="gallery" data-type="pdf" data-caption="${title}" class="pdf-container pdf-thumbnail">
+        <a href="${pdfUrl}" data-fancybox="project-${index}" data-type="pdf" data-caption="${title}" class="pdf-container pdf-thumbnail">
             <div class="pdf-card-preview">
                 <span class="pdf-icon">📄</span>
                 <span class="pdf-label">Click to Read PDF</span>
@@ -190,14 +192,14 @@ function loadMoreProjects(countToLoad) {
         if (project.image) {
             mediaHTML = `
                 <div class="image-container">
-                    <a href="${project.image}" data-fancybox="gallery" data-caption="${project.title}">
+                    <a href="${project.image}" data-fancybox="project-${index}" data-caption="${project.title}">
                         <img src="${project.image}" alt="${project.title}" loading="lazy">
                     </a>
                 </div>`;
         } else if (project.video) {
             mediaHTML = renderVideoEmbed(project.video);
         } else if (project.pdf) {
-            mediaHTML = renderPdfThumbnail(project.pdf, project.title);
+            mediaHTML = renderPdfThumbnail(project.pdf, project.title, index);
         }
 
         card.innerHTML = `
@@ -208,7 +210,7 @@ function loadMoreProjects(countToLoad) {
             <p class="excerpt">${project.excerpt}</p>
 
             ${project.pdf && (project.image || project.video) ? `
-                <a href="${project.pdf}" data-fancybox="gallery" data-type="pdf" data-caption="${project.title}" class="pdf-link-btn" style="margin-top: 5px; font-size: 0.85rem; color: #0066cc; text-decoration: underline; display: inline-block;">📄 View Attached PDF</a>
+                <a href="${project.pdf}" data-fancybox="project-${index}" data-type="pdf" data-caption="${project.title}" class="pdf-link-btn" style="margin-top: 5px; font-size: 0.85rem; color: #0066cc; text-decoration: underline; display: inline-block;">📄 View Attached PDF</a>
             ` : ''}
             
             ${project.body ? `
