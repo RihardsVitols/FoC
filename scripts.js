@@ -15,10 +15,10 @@ document.addEventListener("DOMContentLoaded", () => {
     setupIntersectionObserver();
     fetchProjects();
     
-    // Bind Fancybox 5 with isolated items and disabled arrows
+    // Bind Fancybox 5 with isolated items and disabled navigation arrows
     Fancybox.bind("[data-fancybox]", {
         infinite: false,
-        Navigation: false, // Disables previous/next arrows
+        Navigation: false,
         iframe: {
             preload: false,
             attr: {
@@ -77,6 +77,7 @@ function parseMarkdownFrontMatter(text) {
     const parts = text.split('---');
     let bodyContent = parts.length >= 3 ? parts.slice(2).join('---').trim() : "";
 
+    // Image Path Formatting
     let imagePath = getField("image");
     if (imagePath) {
         if (imagePath.startsWith('/')) imagePath = imagePath.substring(1);
@@ -85,11 +86,21 @@ function parseMarkdownFrontMatter(text) {
         }
     }
 
+    // PDF Path Formatting
     let pdfPath = getField("pdf");
     if (pdfPath) {
         if (pdfPath.startsWith('/')) pdfPath = pdfPath.substring(1);
         if (!pdfPath.startsWith('http')) {
             pdfPath = `https://rihardsvitols.github.io/FoC/${pdfPath}`;
+        }
+    }
+
+    // PDF Cover Screenshot Path Formatting
+    let pdfCoverPath = getField("pdf_cover");
+    if (pdfCoverPath) {
+        if (pdfCoverPath.startsWith('/')) pdfCoverPath = pdfCoverPath.substring(1);
+        if (!pdfCoverPath.startsWith('http')) {
+            pdfCoverPath = `https://rihardsvitols.github.io/FoC/${pdfCoverPath}`;
         }
     }
 
@@ -105,6 +116,7 @@ function parseMarkdownFrontMatter(text) {
         image: imagePath || "",
         video: getField("video") || "",
         pdf: pdfPath || "",
+        pdfCover: pdfCoverPath || "",
         excerpt: getField("excerpt") || "",
         body: bodyContent
     };
@@ -145,18 +157,19 @@ function renderVideoEmbed(url) {
     return "";
 }
 
-// Render PDF Card Thumbnail configured for a single standalone item
-function renderPdfThumbnail(pdfUrl, title, index) {
+// Render PDF Screenshot Cover on Card Grid
+function renderPdfThumbnail(pdfUrl, coverImgUrl, title, index) {
     if (!pdfUrl) return "";
 
+    // Use uploaded screenshot, fallback to project cover image or default
+    const previewImage = coverImgUrl || 'images/default-pdf-cover.png';
+
     return `
-        <a href="${pdfUrl}" data-fancybox="project-${index}" data-type="pdf" data-caption="${title}" class="pdf-container pdf-thumbnail">
-            <div class="pdf-card-preview">
-                <span class="pdf-icon">📄</span>
-                <span class="pdf-label">Click to Read PDF</span>
-                <span class="pdf-sublabel">${title}</span>
-            </div>
-        </a>`;
+        <div class="image-container">
+            <a href="${pdfUrl}" data-fancybox="project-${index}" data-type="pdf" data-caption="${title}">
+                <img src="${previewImage}" alt="${title}" loading="lazy">
+            </a>
+        </div>`;
 }
 
 function resetAndRender() {
@@ -199,7 +212,8 @@ function loadMoreProjects(countToLoad) {
         } else if (project.video) {
             mediaHTML = renderVideoEmbed(project.video);
         } else if (project.pdf) {
-            mediaHTML = renderPdfThumbnail(project.pdf, project.title, index);
+            // Render screenshot cover for the PDF card
+            mediaHTML = renderPdfThumbnail(project.pdf, project.pdfCover || project.image, project.title, index);
         }
 
         card.innerHTML = `
