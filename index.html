@@ -82,10 +82,12 @@
         </footer>
     </div>
 
-    <!-- Image Lightbox Modal Overlay -->
-    <div id="imageModal" class="image-modal" onclick="closeImageModal()">
-        <span class="close-btn">&times;</span>
-        <img id="modalImage" src="" alt="Full size project view">
+    <!-- Unified Lightbox Modal Overlay for Images & PDFs -->
+    <div id="mediaModal" class="image-modal" onclick="closeModal()">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <div id="modalContentContainer" class="modal-body-container" onclick="event.stopPropagation()">
+            <!-- Content dynamically injected here -->
+        </div>
     </div>
 
     <!-- Link External JavaScript -->
