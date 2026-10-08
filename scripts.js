@@ -264,10 +264,12 @@ function openImageModal(imageSrc) {
 function openPdfModal(pdfUrl) {
     const modal = document.getElementById('mediaModal');
     const container = document.getElementById('modalContentContainer');
+    // #view=FitH forces the PDF engine to expand text to fill container width
     container.innerHTML = `
-        <iframe src="${pdfUrl}#toolbar=1" type="application/pdf" width="100%" height="100%" style="border:none; border-radius:6px; background:#fff;">
+        <iframe src="${pdfUrl}#view=FitH" type="application/pdf" style="width: 100%; height: 100%; border: none; border-radius: 8px; background: #fff;">
             <p>Your browser does not support inline PDFs. <a href="${pdfUrl}" target="_blank">Download PDF</a></p>
         </iframe>`;
+    
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
