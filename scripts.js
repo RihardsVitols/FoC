@@ -42,7 +42,6 @@ function fetchProjects() {
         })
         .then(projects => {
             if (projects) {
-                // Sort projects by raw ISO date string: newest first
                 allProjects = projects.sort((a, b) => {
                     const dateA = a.rawDate ? new Date(a.rawDate) : 0;
                     const dateB = b.rawDate ? new Date(b.rawDate) : 0;
@@ -69,7 +68,7 @@ function parseMarkdownFrontMatter(text) {
     const parts = text.split('---');
     let bodyContent = parts.length >= 3 ? parts.slice(2).join('---').trim() : "";
 
-    // Image Path Formatting (Safely check if non-empty)
+    // Image Path Formatting
     let imagePath = getField("image");
     if (imagePath) {
         if (imagePath.startsWith('/')) imagePath = imagePath.substring(1);
@@ -78,7 +77,7 @@ function parseMarkdownFrontMatter(text) {
         }
     }
 
-    // PDF Path Formatting (Safely check if non-empty to prevent crash)
+    // PDF Path Formatting
     let pdfPath = getField("pdf");
     if (pdfPath) {
         if (pdfPath.startsWith('/')) pdfPath = pdfPath.substring(1);
@@ -93,8 +92,8 @@ function parseMarkdownFrontMatter(text) {
     return {
         title: getField("title") || "Untitled Project",
         author: getField("author") || "",
-        rawDate: rawDate,   // Kept for accurate chronological sorting
-        date: yearOnly,     // Only 4-digit year for visual rendering
+        rawDate: rawDate,
+        date: yearOnly,
         category: getField("category") || "Uncategorized",
         image: imagePath || "",
         video: getField("video") || "",
@@ -108,7 +107,6 @@ function parseMarkdownFrontMatter(text) {
 function renderVideoEmbed(url) {
     if (!url) return "";
 
-    // YouTube link handling
     const youtubeMatch = url.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/);
     if (youtubeMatch) {
         return `
@@ -119,7 +117,6 @@ function renderVideoEmbed(url) {
             </div>`;
     }
 
-    // Vimeo link handling
     const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?([0-9]+)/);
     if (vimeoMatch) {
         return `
@@ -129,7 +126,6 @@ function renderVideoEmbed(url) {
             </div>`;
     }
 
-    // Direct MP4 video file handling
     if (url.match(/\.(mp4|webm|ogg)$/i)) {
         return `
             <div class="video-container">
@@ -143,19 +139,21 @@ function renderVideoEmbed(url) {
     return "";
 }
 
-// Render PDF Embedded Viewer
-function renderPdfEmbed(pdfUrl) {
+// Render PDF Document Thumbnail (Clickable to Lightbox)
+function renderPdfThumbnail(pdfUrl, title) {
     if (!pdfUrl) return "";
 
     return `
-        <div class="pdf-container">
-            <iframe src="${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1" type="application/pdf" width="100%" height="100%">
-                <p>Your browser does not support inline PDFs. <a href="${pdfUrl}" target="_blank">Download PDF</a></p>
-            </iframe>
+        <div class="pdf-container pdf-thumbnail" onclick="openPdfModal('${pdfUrl}')">
+            <div class="pdf-card-preview">
+                <span class="pdf-icon">📄</span>
+                <span class="pdf-label">Click to Preview Document</span>
+                <span class="pdf-sublabel">${title}</span>
+            </div>
         </div>`;
 }
 
-// Reset grid view and load the initial 9 items
+// Reset grid view and load initial items
 function resetAndRender() {
     const grid = document.getElementById('portfolio-grid');
     grid.innerHTML = '';
@@ -166,11 +164,10 @@ function resetAndRender() {
         return;
     }
 
-    // Load initial batch of 9 projects
     loadMoreProjects(INITIAL_LOAD);
 }
 
-// Append the next batch of projects to the grid
+// Append next batch of projects to grid
 function loadMoreProjects(countToLoad) {
     const grid = document.getElementById('portfolio-grid');
     const nextBatch = filteredProjects.slice(visibleCount, visibleCount + countToLoad);
@@ -180,7 +177,6 @@ function loadMoreProjects(countToLoad) {
         const card = document.createElement('div');
         card.className = 'project-card';
         
-        // Build metadata dynamically (Author • Category • Year)
         const metaParts = [];
         if (project.author) metaParts.push(project.author);
         if (project.category) metaParts.push(project.category);
@@ -188,7 +184,7 @@ function loadMoreProjects(countToLoad) {
 
         const metaText = metaParts.join(" • ");
 
-        // Determine main media item to display inside the card
+        // Media display selection logic
         let mediaHTML = "";
         if (project.image) {
             mediaHTML = `
@@ -198,7 +194,7 @@ function loadMoreProjects(countToLoad) {
         } else if (project.video) {
             mediaHTML = renderVideoEmbed(project.video);
         } else if (project.pdf) {
-            mediaHTML = renderPdfEmbed(project.pdf);
+            mediaHTML = renderPdfThumbnail(project.pdf, project.title);
         }
 
         card.innerHTML = `
@@ -209,7 +205,7 @@ function loadMoreProjects(countToLoad) {
             <p class="excerpt">${project.excerpt}</p>
 
             ${project.pdf && (project.image || project.video) ? `
-                <a href="${project.pdf}" target="_blank" class="pdf-link-btn" style="margin-top: 5px; font-size: 0.85rem; color: #0066cc; text-decoration: underline; display: inline-block;">📄 View Attached PDF</a>
+                <button onclick="openPdfModal('${project.pdf}')" class="pdf-link-btn" style="background:none; border:none; padding:0; cursor:pointer; margin-top: 5px; font-size: 0.85rem; color: #0066cc; text-decoration: underline; display: inline-block;">📄 View Attached PDF</button>
             ` : ''}
             
             ${project.body ? `
@@ -223,11 +219,9 @@ function loadMoreProjects(countToLoad) {
         visibleCount++;
     });
 
-    // Re-attach or remove the scroll trigger sentinel
     updateSentinel();
 }
 
-// Set up Intersection Observer for infinite scrolling
 function setupIntersectionObserver() {
     observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -240,17 +234,13 @@ function setupIntersectionObserver() {
     });
 }
 
-// Add/move sentinel element to end of grid to trigger next load
 function updateSentinel() {
     let sentinel = document.getElementById('scroll-sentinel');
-    
-    // Remove existing sentinel if present
     if (sentinel) {
         observer.unobserve(sentinel);
         sentinel.remove();
     }
 
-    // If there are more projects left to load, create a new sentinel at the end
     if (visibleCount < filteredProjects.length) {
         sentinel = document.createElement('div');
         sentinel.id = 'scroll-sentinel';
@@ -261,22 +251,36 @@ function updateSentinel() {
     }
 }
 
-// Open full-screen image overlay
+// Lightbox: Image Modal
 function openImageModal(imageSrc) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    modalImg.src = imageSrc;
+    const modal = document.getElementById('mediaModal');
+    const container = document.getElementById('modalContentContainer');
+    container.innerHTML = `<img src="${imageSrc}" alt="Full size project image">`;
     modal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
 
-// Close full-screen image overlay
-function closeImageModal() {
-    document.getElementById('imageModal').style.display = 'none';
+// Lightbox: PDF Document Modal
+function openPdfModal(pdfUrl) {
+    const modal = document.getElementById('mediaModal');
+    const container = document.getElementById('modalContentContainer');
+    container.innerHTML = `
+        <iframe src="${pdfUrl}#toolbar=1" type="application/pdf" width="100%" height="100%" style="border:none; border-radius:6px; background:#fff;">
+            <p>Your browser does not support inline PDFs. <a href="${pdfUrl}" target="_blank">Download PDF</a></p>
+        </iframe>`;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close Modal
+function closeModal() {
+    const modal = document.getElementById('mediaModal');
+    const container = document.getElementById('modalContentContainer');
+    modal.style.display = 'none';
+    container.innerHTML = ''; // Stops iframe background memory usage
     document.body.style.overflow = 'auto';
 }
 
-// Toggle full project description visibility
 function toggleDetails(index) {
     const detailsDiv = document.getElementById(`details-${index}`);
     const btn = detailsDiv.previousElementSibling;
@@ -290,7 +294,6 @@ function toggleDetails(index) {
     }
 }
 
-// Helper to convert Markdown links, raw URLs, and line breaks
 function formatMarkdownBody(bodyText) {
     if (!bodyText) return "";
 
@@ -301,7 +304,6 @@ function formatMarkdownBody(bodyText) {
         .replace(/\n/g, '<br>');
 }
 
-// Filter projects by category
 function filterProjects(category, btnElement) {
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     btnElement.classList.add('active');
@@ -315,7 +317,6 @@ function filterProjects(category, btnElement) {
     resetAndRender();
 }
 
-// Render status / error messages in grid
 function renderMessage(message) {
     const grid = document.getElementById('portfolio-grid');
     grid.innerHTML = `<p class="loading-text">${message}</p>`;
