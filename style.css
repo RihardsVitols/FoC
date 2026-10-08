@@ -73,11 +73,15 @@ nav a:hover {
     margin-bottom: 50px;
 }
 
-.portfolio-grid {
+/* .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 40px 30px;
-    align-items: start; /* Prevents neighboring cards in the same row from shifting down when expanded */
+    align-items: start; 
+} */
+.portfolio-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
 }
 
 .project-card {
