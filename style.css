@@ -164,3 +164,12 @@ nav a:hover {
 .pdf-icon {
     font-size: 2.5rem;
     margin-bottom:
+}
+
+footer {
+    margin-top: 80px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color); /* Restores the separation line */
+    color: var(--muted-color);
+    font-size: 0.85rem;
+}
