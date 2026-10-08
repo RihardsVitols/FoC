@@ -70,13 +70,19 @@ function parseMarkdownFrontMatter(text) {
     let bodyContent = parts.length >= 3 ? parts.slice(2).join('---').trim() : "";
 
     let imagePath = getField("image");
-
     if (imagePath.startsWith('/')) {
         imagePath = imagePath.substring(1);
     }
-
     if (imagePath && !imagePath.startsWith('http')) {
         imagePath = `https://rihardsvitols.github.io/FoC/${imagePath}`;
+    }
+
+    let pdfPath = getField("pdf");
+    if (pdfPath.startsWith('/')) {
+        pdfPath = pdfPath.substring(1);
+    }
+    if (pdfPath && !pdfPath.startsWith('http')) {
+        pdfPath = `https://rihardsvitols.github.io/FoC/${pdfPath}`;
     }
 
     const rawDate = getField("date");
@@ -90,11 +96,13 @@ function parseMarkdownFrontMatter(text) {
         category: getField("category") || "Uncategorized",
         image: imagePath,
         video: getField("video") || "",
+        pdf: pdfPath,
         excerpt: getField("excerpt") || "",
         body: bodyContent
     };
 }
 
+// Render Video Embed
 function renderVideoEmbed(url) {
     if (!url) return "";
 
@@ -123,7 +131,7 @@ function renderVideoEmbed(url) {
     if (url.match(/\.(mp4|webm|ogg)$/i)) {
         return `
             <div class="video-container">
-                <video controls preload="metadata" style="width:100%; height:auto; border-radius:4px;">
+                <video controls preload="metadata" style="width:100%; height:100%; border-radius:4px; object-fit: cover;">
                     <source src="${url}">
                     Your browser does not support HTML5 video.
                 </video>
@@ -131,6 +139,18 @@ function renderVideoEmbed(url) {
     }
 
     return "";
+}
+
+// Render PDF Embedded Viewer
+function renderPdfEmbed(pdfUrl) {
+    if (!pdfUrl) return "";
+
+    return `
+        <div class="pdf-container">
+            <iframe src="${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1" type="application/pdf" width="100%" height="100%">
+                <p>Your browser does not support inline PDFs. <a href="${pdfUrl}" target="_blank">Download PDF</a></p>
+            </iframe>
+        </div>`;
 }
 
 // Reset grid view and load the initial 9 items
@@ -149,144 +169,4 @@ function resetAndRender() {
 }
 
 // Append the next batch of projects to the grid
-function loadMoreProjects(countToLoad) {
-    const grid = document.getElementById('portfolio-grid');
-    const nextBatch = filteredProjects.slice(visibleCount, visibleCount + countToLoad);
-
-    nextBatch.forEach((project) => {
-        const index = visibleCount;
-        const card = document.createElement('div');
-        card.className = 'project-card';
-        
-        // Build metadata dynamically (Author • Category • Year)
-        const metaParts = [];
-        if (project.author) metaParts.push(project.author);
-        if (project.category) metaParts.push(project.category);
-        if (project.date) metaParts.push(project.date);
-
-        const metaText = metaParts.join(" • ");
-
-        card.innerHTML = `
-            ${project.image ? `
-                <div class="image-container">
-                    <img src="${project.image}" alt="${project.title}" loading="lazy" onclick="openImageModal('${project.image}')">
-                </div>
-            ` : ''}
-
-            ${project.video ? renderVideoEmbed(project.video) : ''}
-            
-            <div class="meta">${metaText}</div>
-            <h2 class="project-title">${project.title}</h2>
-            <p class="excerpt">${project.excerpt}</p>
-            
-            ${project.body ? `
-                <button class="toggle-btn" onclick="toggleDetails(${index})">Read Full Details</button>
-                <div id="details-${index}" class="full-details" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-                    ${formatMarkdownBody(project.body)}
-                </div>
-            ` : ''}
-        `;
-        grid.appendChild(card);
-        visibleCount++;
-    });
-
-    // Re-attach or remove the scroll trigger sentinel
-    updateSentinel();
-}
-
-// Set up Intersection Observer for infinite scrolling
-function setupIntersectionObserver() {
-    observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && visibleCount < filteredProjects.length) {
-                loadMoreProjects(BATCH_LOAD);
-            }
-        });
-    }, {
-        rootMargin: '200px' // Trigger loading 200px before reaching the exact bottom
-    });
-}
-
-// Add/move sentinel element to end of grid to trigger next load
-function updateSentinel() {
-    let sentinel = document.getElementById('scroll-sentinel');
-    
-    // Remove existing sentinel if present
-    if (sentinel) {
-        observer.unobserve(sentinel);
-        sentinel.remove();
-    }
-
-    // If there are more projects left to load, create a new sentinel at the end
-    if (visibleCount < filteredProjects.length) {
-        sentinel = document.createElement('div');
-        sentinel.id = 'scroll-sentinel';
-        sentinel.style.height = '10px';
-        sentinel.style.width = '100%';
-        document.getElementById('portfolio-grid').appendChild(sentinel);
-        observer.observe(sentinel);
-    }
-}
-
-// Open full-screen image overlay (and lock mobile background scroll)
-function openImageModal(imageSrc) {
-    const modal = document.getElementById('imageModal');
-    const modalImg = document.getElementById('modalImage');
-    modalImg.src = imageSrc;
-    modal.style.display = 'flex';
-    document.body.style.overflow = 'hidden'; // Prevents scrolling background on mobile
-}
-
-// Close full-screen image overlay (and restore scroll)
-function closeImageModal() {
-    document.getElementById('imageModal').style.display = 'none';
-    document.body.style.overflow = 'auto'; // Restores normal page scrolling
-}
-
-// Toggle full project description visibility
-function toggleDetails(index) {
-    const detailsDiv = document.getElementById(`details-${index}`);
-    const btn = detailsDiv.previousElementSibling;
-    
-    if (detailsDiv.style.display === "none") {
-        detailsDiv.style.display = "block";
-        btn.innerText = "Hide Details";
-    } else {
-        detailsDiv.style.display = "none";
-        btn.innerText = "Read Full Details";
-    }
-}
-
-// Helper to convert Markdown links, raw URLs, and line breaks
-function formatMarkdownBody(bodyText) {
-    if (!bodyText) return "";
-
-    return bodyText
-        // Convert Markdown links [text](url)
-        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
-        // Convert raw plain URLs
-        .replace(/(^|[^"'])((https?:\/\/[^\s<]+))/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$2</a>')
-        // Convert line breaks
-        .replace(/\n\n/g, '<br><br>')
-        .replace(/\n/g, '<br>');
-}
-
-// Filter projects by category
-function filterProjects(category, btnElement) {
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    btnElement.classList.add('active');
-
-    if (category === 'ALL') {
-        filteredProjects = [...allProjects];
-    } else {
-        filteredProjects = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
-    }
-
-    resetAndRender();
-}
-
-// Render status / error messages in grid
-function renderMessage(message) {
-    const grid = document.getElementById('portfolio-grid');
-    grid.innerHTML = `<p class="loading-text">${message}</p>`;
-}
+function
