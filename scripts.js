@@ -58,7 +58,7 @@ function fetchProjects() {
         });
 }
 
-// Parse YAML front-matter and body content from Markdown string
+// Parse YAML front-matter and body content from Markdown string safely
 function parseMarkdownFrontMatter(text) {
     const getField = (field) => {
         const regex = new RegExp(`${field}:\\s*["']?(.*?)["']?\\s*$`, 'm');
@@ -69,20 +69,22 @@ function parseMarkdownFrontMatter(text) {
     const parts = text.split('---');
     let bodyContent = parts.length >= 3 ? parts.slice(2).join('---').trim() : "";
 
+    // Image Path Formatting (Safely check if non-empty)
     let imagePath = getField("image");
-    if (imagePath.startsWith('/')) {
-        imagePath = imagePath.substring(1);
-    }
-    if (imagePath && !imagePath.startsWith('http')) {
-        imagePath = `https://rihardsvitols.github.io/FoC/${imagePath}`;
+    if (imagePath) {
+        if (imagePath.startsWith('/')) imagePath = imagePath.substring(1);
+        if (!imagePath.startsWith('http')) {
+            imagePath = `https://rihardsvitols.github.io/FoC/${imagePath}`;
+        }
     }
 
+    // PDF Path Formatting (Safely check if non-empty to prevent crash)
     let pdfPath = getField("pdf");
-    if (pdfPath.startsWith('/')) {
-        pdfPath = pdfPath.substring(1);
-    }
-    if (pdfPath && !pdfPath.startsWith('http')) {
-        pdfPath = `https://rihardsvitols.github.io/FoC/${pdfPath}`;
+    if (pdfPath) {
+        if (pdfPath.startsWith('/')) pdfPath = pdfPath.substring(1);
+        if (!pdfPath.startsWith('http')) {
+            pdfPath = `https://rihardsvitols.github.io/FoC/${pdfPath}`;
+        }
     }
 
     const rawDate = getField("date");
@@ -94,9 +96,9 @@ function parseMarkdownFrontMatter(text) {
         rawDate: rawDate,   // Kept for accurate chronological sorting
         date: yearOnly,     // Only 4-digit year for visual rendering
         category: getField("category") || "Uncategorized",
-        image: imagePath,
+        image: imagePath || "",
         video: getField("video") || "",
-        pdf: pdfPath,
+        pdf: pdfPath || "",
         excerpt: getField("excerpt") || "",
         body: bodyContent
     };
@@ -169,4 +171,152 @@ function resetAndRender() {
 }
 
 // Append the next batch of projects to the grid
-function
+function loadMoreProjects(countToLoad) {
+    const grid = document.getElementById('portfolio-grid');
+    const nextBatch = filteredProjects.slice(visibleCount, visibleCount + countToLoad);
+
+    nextBatch.forEach((project) => {
+        const index = visibleCount;
+        const card = document.createElement('div');
+        card.className = 'project-card';
+        
+        // Build metadata dynamically (Author • Category • Year)
+        const metaParts = [];
+        if (project.author) metaParts.push(project.author);
+        if (project.category) metaParts.push(project.category);
+        if (project.date) metaParts.push(project.date);
+
+        const metaText = metaParts.join(" • ");
+
+        // Determine main media item to display inside the card
+        let mediaHTML = "";
+        if (project.image) {
+            mediaHTML = `
+                <div class="image-container">
+                    <img src="${project.image}" alt="${project.title}" loading="lazy" onclick="openImageModal('${project.image}')">
+                </div>`;
+        } else if (project.video) {
+            mediaHTML = renderVideoEmbed(project.video);
+        } else if (project.pdf) {
+            mediaHTML = renderPdfEmbed(project.pdf);
+        }
+
+        card.innerHTML = `
+            ${mediaHTML}
+            
+            <div class="meta">${metaText}</div>
+            <h2 class="project-title">${project.title}</h2>
+            <p class="excerpt">${project.excerpt}</p>
+
+            ${project.pdf && (project.image || project.video) ? `
+                <a href="${project.pdf}" target="_blank" class="pdf-link-btn" style="margin-top: 5px; font-size: 0.85rem; color: #0066cc; text-decoration: underline; display: inline-block;">📄 View Attached PDF</a>
+            ` : ''}
+            
+            ${project.body ? `
+                <button class="toggle-btn" onclick="toggleDetails(${index})">Read Full Details</button>
+                <div id="details-${index}" class="full-details" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                    ${formatMarkdownBody(project.body)}
+                </div>
+            ` : ''}
+        `;
+        grid.appendChild(card);
+        visibleCount++;
+    });
+
+    // Re-attach or remove the scroll trigger sentinel
+    updateSentinel();
+}
+
+// Set up Intersection Observer for infinite scrolling
+function setupIntersectionObserver() {
+    observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting && visibleCount < filteredProjects.length) {
+                loadMoreProjects(BATCH_LOAD);
+            }
+        });
+    }, {
+        rootMargin: '200px'
+    });
+}
+
+// Add/move sentinel element to end of grid to trigger next load
+function updateSentinel() {
+    let sentinel = document.getElementById('scroll-sentinel');
+    
+    // Remove existing sentinel if present
+    if (sentinel) {
+        observer.unobserve(sentinel);
+        sentinel.remove();
+    }
+
+    // If there are more projects left to load, create a new sentinel at the end
+    if (visibleCount < filteredProjects.length) {
+        sentinel = document.createElement('div');
+        sentinel.id = 'scroll-sentinel';
+        sentinel.style.height = '10px';
+        sentinel.style.width = '100%';
+        document.getElementById('portfolio-grid').appendChild(sentinel);
+        observer.observe(sentinel);
+    }
+}
+
+// Open full-screen image overlay
+function openImageModal(imageSrc) {
+    const modal = document.getElementById('imageModal');
+    const modalImg = document.getElementById('modalImage');
+    modalImg.src = imageSrc;
+    modal.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close full-screen image overlay
+function closeImageModal() {
+    document.getElementById('imageModal').style.display = 'none';
+    document.body.style.overflow = 'auto';
+}
+
+// Toggle full project description visibility
+function toggleDetails(index) {
+    const detailsDiv = document.getElementById(`details-${index}`);
+    const btn = detailsDiv.previousElementSibling;
+    
+    if (detailsDiv.style.display === "none") {
+        detailsDiv.style.display = "block";
+        btn.innerText = "Hide Details";
+    } else {
+        detailsDiv.style.display = "none";
+        btn.innerText = "Read Full Details";
+    }
+}
+
+// Helper to convert Markdown links, raw URLs, and line breaks
+function formatMarkdownBody(bodyText) {
+    if (!bodyText) return "";
+
+    return bodyText
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
+        .replace(/(^|[^"'])((https?:\/\/[^\s<]+))/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$2</a>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+}
+
+// Filter projects by category
+function filterProjects(category, btnElement) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    btnElement.classList.add('active');
+
+    if (category === 'ALL') {
+        filteredProjects = [...allProjects];
+    } else {
+        filteredProjects = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
+    }
+
+    resetAndRender();
+}
+
+// Render status / error messages in grid
+function renderMessage(message) {
+    const grid = document.getElementById('portfolio-grid');
+    grid.innerHTML = `<p class="loading-text">${message}</p>`;
+}
