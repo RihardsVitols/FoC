@@ -73,15 +73,11 @@ nav a:hover {
     margin-bottom: 50px;
 }
 
-/* .portfolio-grid {
+.portfolio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 40px 30px;
-    align-items: start; 
-} */
-.portfolio-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
+    align-items: start; /* Anchors all cards to the top of their row */
 }
 
 .project-card {
@@ -89,7 +85,8 @@ nav a:hover {
     color: inherit;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: auto !important; /* Prevents card from stretching full row height */
+    align-self: start;       /* Isolates card height changes to itself */
 }
 
 /* Shared fixed-size media containers (Images, Videos, PDFs) */
