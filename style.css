@@ -137,174 +137,35 @@ nav a:hover {
     border: none;
 }
 
-/* PDF View Button/Link */
-.pdf-link-btn {
-    display: inline-block;
-    margin-top: 8px;
-    font-size: 0.85rem;
-    color: #0066cc;
-    text-decoration: underline;
-    font-weight: 500;
-    transition: color 0.2s ease;
+/* PDF Card Thumbnail Styling */
+.pdf-thumbnail {
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid var(--border-color);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.pdf-link-btn:hover {
-    color: #004499;
+.pdf-thumbnail:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.meta {
-    font-size: 0.8rem;
-    color: var(--muted-color);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 5px;
+.pdf-card-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
 }
 
-.project-title {
-    font-size: 1.2rem;
-    font-weight: 500;
+.pdf-icon {
+    font-size: 2.5rem;
     margin-bottom: 8px;
 }
 
-.excerpt {
+.pdf-label {
     font-size: 0.9rem;
-    color: var(--muted-color);
-}
-
-footer {
-    margin-top: 80px;
-    padding-top: 20px;
-    border-top: 1px solid var(--border-color);
-    color: var(--muted-color);
-    font-size: 0.85rem;
-}
-
-/* Filter Navigation Buttons */
-.filter-container {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-}
-
-.filter-btn {
-    background: none;
-    border: none;
-    color: var(--muted-color, #777);
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 4px 8px;
-    transition: color 0.2s ease;
-}
-
-.filter-btn:hover {
-    color: var(--text-color, #000);
-}
-
-.filter-btn.active {
-    color: var(--text-color, #000);
-    font-weight: 700;
-    border-bottom: 2px solid var(--text-color, #000);
-}
-
-/* Clickable Project Links */
-.full-details a.project-link {
-    color: #0066cc;
-    text-decoration: underline;
-    word-break: break-word;
-    transition: color 0.2s ease;
-}
-
-.full-details a.project-link:hover {
-    color: #004499;
-}
-
-/* Loading Placeholder Text */
-.loading-text {
-    color: var(--muted-color, #777);
-    font-size: 0.95rem;
-    grid-column: 1 / -1;
-    padding: 30px 0;
-}
-
-.toggle-btn {
-    background: transparent;
-    border: 1px solid var(--border-color, #ccc);
-    color: var(--text-color, #333);
-    padding: 6px 12px;
-    margin-top: auto; /* Aligns read-more buttons across grid rows */
-    font-size: 0.8rem;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
-
-.toggle-btn:hover {
-    background-color: var(--text-color, #333);
-    color: #fff;
-}
-
-.full-details {
-    line-height: 1.6;
-    font-size: 0.9rem;
-    margin-top: 10px;
-}
-
-/* Mobile Responsive Adjustments */
-@media (max-width: 768px) {
-    .container {
-        padding: 15px;
-    }
-
-    header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-
-    .filter-container {
-        width: 100%;
-        overflow-x: auto;
-        white-space: nowrap;
-        padding-bottom: 5px;
-    }
-
-    .site-title {
-        font-size: 1.3rem !important;
-        white-space: normal;
-    }
-    
-    .site-logo {
-        height: 36px;
-    }
-
-    .portfolio-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-
-    .image-container,
-    .video-container,
-    .pdf-container {
-        height: 200px !important;
-    }
-
-    .filter-btn, 
-    .toggle-btn {
-        padding: 12px 18px;
-        font-size: 16px;
-        min-height: 44px;
-    }
-
-    .image-modal img {
-        max-width: 95%;
-        max-height: 80%;
-    }
-
-    .image-modal .close-btn {
-        top: 15px;
-        right: 20px;
-        font-size: 40px;
-        padding: 10px;
-    }
-}
+    font-weight: 60
