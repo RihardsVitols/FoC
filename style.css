@@ -137,39 +137,166 @@ nav a:hover {
     border: none;
 }
 
-/* PDF Card Thumbnail Styling */
-.pdf-thumbnail {
+/* PDF View Button/Link */
+.pdf-link-btn {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: #0066cc;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s ease;
+}
+
+.pdf-link-btn:hover {
+    color: #004499;
+}
+
+.meta {
+    font-size: 0.8rem;
+    color: var(--muted-color);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+}
+
+.project-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.excerpt {
+    font-size: 0.9rem;
+    color: var(--muted-color);
+}
+
+/* Filter Navigation Buttons (Restored to clean text aesthetic) */
+.filter-container {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.filter-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted-color, #666666);
+    font-size: 0.95rem;
+    font-weight: 500;
     cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 1px solid var(--border-color);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 4px 0;
+    transition: color 0.2s ease;
+    outline: none;
 }
 
-.pdf-thumbnail:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+.filter-btn:hover {
+    color: var(--text-color, #111111);
 }
 
-.pdf-card-preview {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: 20px;
+.filter-btn.active {
+    color: var(--text-color, #111111);
+    font-weight: 700;
+    border-bottom: 2px solid var(--text-color, #111111);
+    border-radius: 0;
 }
 
-.pdf-icon {
-    font-size: 2.5rem;
-    margin-bottom:
+/* Clickable Project Links */
+.full-details a.project-link {
+    color: #0066cc;
+    text-decoration: underline;
+    word-break: break-word;
+    transition: color 0.2s ease;
 }
 
+.full-details a.project-link:hover {
+    color: #004499;
+}
+
+/* Loading Placeholder Text */
+.loading-text {
+    color: var(--muted-color, #777777);
+    font-size: 0.95rem;
+    grid-column: 1 / -1;
+    padding: 30px 0;
+}
+
+/* Read Details Toggle Button */
+.toggle-btn {
+    background: transparent;
+    border: 1px solid var(--border-color, #eeeeee);
+    color: var(--text-color, #111111);
+    padding: 8px 16px;
+    margin-top: auto;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.toggle-btn:hover {
+    background-color: var(--text-color, #111111);
+    color: #ffffff;
+}
+
+.full-details {
+    line-height: 1.6;
+    font-size: 0.9rem;
+    margin-top: 10px;
+}
+
+/* Footer Section */
 footer {
     margin-top: 80px;
     padding-top: 20px;
-    border-top: 1px solid var(--border-color); /* Restores the separation line */
+    border-top: 1px solid var(--border-color); /* Separation line */
     color: var(--muted-color);
     font-size: 0.85rem;
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .filter-container {
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+        gap: 15px;
+    }
+
+    .site-title {
+        font-size: 1.3rem !important;
+        white-space: normal;
+    }
+    
+    .site-logo {
+        height: 36px;
+    }
+
+    .portfolio-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .image-container,
+    .video-container,
+    .pdf-container {
+        height: 200px !important;
+    }
+
+    .toggle-btn {
+        padding: 10px 14px;
+        font-size: 0.85rem;
+        min-height: 44px;
+    }
 }
