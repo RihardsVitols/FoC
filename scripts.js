@@ -18,18 +18,26 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // Bind Fancybox 5 with isolated items and disabled navigation arrows
     if (typeof Fancybox !== "undefined") {
-        Fancybox.bind("[data-fancybox]", {
-            infinite: false,
-            Navigation: false,
-            iframe: {
-                preload: false,
-                attr: {
-                    scrolling: "auto"
+    Fancybox.bind("[data-fancybox]", {
+        infinite: false,
+        Navigation: false,
+        iframe: {
+            preload: false,
+            attr: {
+                scrolling: "auto"
+            }
+        },
+        on: {
+            done: (fancybox, slide) => {
+                // Forces model-viewer to re-evaluate dimensions once lightbox transition completes
+                const viewer = slide.el.querySelector("model-viewer");
+                if (viewer && typeof viewer.dismissPoster === "function") {
+                    viewer.dismissPoster();
                 }
             }
-        });
-    }
-});
+        }
+    });
+}
 
 function fetchProjects() {
     console.log("Fetching projects from GitHub...");
