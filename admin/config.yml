@@ -20,7 +20,7 @@ collections:
       - { label: "Student Name / Author", name: "author", widget: "string" }
       - { label: "Date created", name: "date", widget: "datetime", format: "YYYY", dateFormat: "YYYY", timeFormat: false }
       - { label: "Category", name: "category", widget: "hidden", default: "VCD" }
-      - { label: "Cover Image", name: "image", widget: "image", required: false }
+      - { label: "Cover Image (JPG, PNG, GIF, WEBP)", name: "image", widget: "image", required: false }
       - { label: "Video URL (YouTube, Vimeo, or MP4)", name: "video", widget: "string", required: false }
       - { label: "PDF Document", name: "pdf", widget: "file", required: false, media_library: { allow_multiple: false } }
       - { label: "PDF Cover Screenshot", name: "pdf_cover", widget: "image", required: false }
@@ -42,7 +42,7 @@ collections:
       - { label: "Student Name / Author", name: "author", widget: "string" }
       - { label: "Date created", name: "date", widget: "datetime", format: "YYYY", dateFormat: "YYYY", timeFormat: false }
       - { label: "Category", name: "category", widget: "hidden", default: "GAME" }
-      - { label: "Cover Image", name: "image", widget: "image", required: false }
+      - { label: "Cover Image (JPG, PNG, GIF, WEBP)", name: "image", widget: "image", required: false }
       - { label: "Video URL (YouTube, Vimeo, or MP4)", name: "video", widget: "string", required: false }
       - { label: "PDF Document", name: "pdf", widget: "file", required: false, media_library: { allow_multiple: false } }
       - { label: "PDF Cover Screenshot", name: "pdf_cover", widget: "image", required: false }
@@ -64,7 +64,7 @@ collections:
       - { label: "Student Name / Author", name: "author", widget: "string" }
       - { label: "Date created", name: "date", widget: "datetime", format: "YYYY", dateFormat: "YYYY", timeFormat: false }
       - { label: "Category", name: "category", widget: "hidden", default: "NMC" }
-      - { label: "Cover Image", name: "image", widget: "image", required: false }
+      - { label: "Cover Image (JPG, PNG, GIF, WEBP)", name: "image", widget: "image", required: false }
       - { label: "Video URL (YouTube, Vimeo, or MP4)", name: "video", widget: "string", required: false }
       - { label: "PDF Document", name: "pdf", widget: "file", required: false, media_library: { allow_multiple: false } }
       - { label: "PDF Cover Screenshot", name: "pdf_cover", widget: "image", required: false }
