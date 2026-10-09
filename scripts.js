@@ -12,6 +12,17 @@ const BATCH_LOAD = 3;
 
 let observer = null; 
 
+// Register Meshopt Decoder with Three.js / model-viewer if available
+if (typeof MeshoptDecoder !== "undefined") {
+    if (typeof MeshoptDecoder.ready !== "undefined") {
+        MeshoptDecoder.ready.then(() => {
+            if (window.THREE && window.THREE.GLTFLoader) {
+                window.THREE.GLTFLoader.setMeshoptDecoder(MeshoptDecoder);
+            }
+        });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     setupIntersectionObserver();
     fetchProjects();
