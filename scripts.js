@@ -104,6 +104,24 @@ function parseMarkdownFrontMatter(text) {
         }
     }
 
+    // 3D Model Path Formatting (.glb / .gltf)
+    let model3dPath = getField("model_3d");
+    if (model3dPath) {
+        if (model3dPath.startsWith('/')) model3dPath = model3dPath.substring(1);
+        if (!model3dPath.startsWith('http')) {
+            model3dPath = `https://rihardsvitols.github.io/FoC/${model3dPath}`;
+        }
+    }
+
+    // 3D Model Cover Screenshot Path Formatting
+    let modelCoverPath = getField("model_cover");
+    if (modelCoverPath) {
+        if (modelCoverPath.startsWith('/')) modelCoverPath = modelCoverPath.substring(1);
+        if (!modelCoverPath.startsWith('http')) {
+            modelCoverPath = `https://rihardsvitols.github.io/FoC/${modelCoverPath}`;
+        }
+    }
+
     const rawDate = getField("date");
     const yearOnly = rawDate ? rawDate.substring(0, 4) : "";
     
@@ -117,6 +135,8 @@ function parseMarkdownFrontMatter(text) {
         video: getField("video") || "",
         pdf: pdfPath || "",
         pdfCover: pdfCoverPath || "",
+        model3d: model3dPath || "",
+        modelCover: modelCoverPath || "",
         excerpt: getField("excerpt") || "",
         body: bodyContent
     };
@@ -161,13 +181,33 @@ function renderVideoEmbed(url) {
 function renderPdfThumbnail(pdfUrl, coverImgUrl, title, index) {
     if (!pdfUrl) return "";
 
-    // Use uploaded screenshot, fallback to project cover image or default
     const previewImage = coverImgUrl || 'images/default-pdf-cover.png';
 
     return `
         <div class="image-container">
             <a href="${pdfUrl}" data-fancybox="project-${index}" data-type="pdf" data-caption="${title}">
                 <img src="${previewImage}" alt="${title}" loading="lazy">
+            </a>
+        </div>`;
+}
+
+// Render 3D Model Card Thumbnail & Interactive Fancybox Lightbox
+function render3DModelCard(modelUrl, coverImgUrl, title, index) {
+    if (!modelUrl) return "";
+
+    const previewImage = coverImgUrl || 'images/default-3d-cover.png';
+
+    // Injects interactive Google <model-viewer> into Fancybox popup
+    const modelHTML = `
+        <div class="fancybox-3d-wrapper">
+            <model-viewer src="${modelUrl}" alt="${title}" camera-controls auto-rotate shadow-intensity="1" ar></model-viewer>
+        </div>`;
+
+    return `
+        <div class="image-container">
+            <a href="javascript:;" data-fancybox="project-${index}" data-src='${modelHTML}' data-caption="${title}">
+                <img src="${previewImage}" alt="${title}" loading="lazy">
+                <span class="badge-3d">📦 3D Model</span>
             </a>
         </div>`;
 }
@@ -204,109 +244,3 @@ function loadMoreProjects(countToLoad) {
         let mediaHTML = "";
         if (project.image) {
             mediaHTML = `
-                <div class="image-container">
-                    <a href="${project.image}" data-fancybox="project-${index}" data-caption="${project.title}">
-                        <img src="${project.image}" alt="${project.title}" loading="lazy">
-                    </a>
-                </div>`;
-        } else if (project.video) {
-            mediaHTML = renderVideoEmbed(project.video);
-        } else if (project.pdf) {
-            // Render screenshot cover for the PDF card
-            mediaHTML = renderPdfThumbnail(project.pdf, project.pdfCover || project.image, project.title, index);
-        }
-
-        card.innerHTML = `
-            ${mediaHTML}
-            
-            <div class="meta">${metaText}</div>
-            <h2 class="project-title">${project.title}</h2>
-            <p class="excerpt">${project.excerpt}</p>
-
-            ${project.pdf && (project.image || project.video) ? `
-                <a href="${project.pdf}" data-fancybox="project-${index}" data-type="pdf" data-caption="${project.title}" class="pdf-link-btn" style="margin-top: 5px; font-size: 0.85rem; color: #0066cc; text-decoration: underline; display: inline-block;">📄 View Attached PDF</a>
-            ` : ''}
-            
-            ${project.body ? `
-                <button class="toggle-btn" onclick="toggleDetails(${index})">Read Full Details</button>
-                <div id="details-${index}" class="full-details" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
-                    ${formatMarkdownBody(project.body)}
-                </div>
-            ` : ''}
-        `;
-        grid.appendChild(card);
-        visibleCount++;
-    });
-
-    updateSentinel();
-}
-
-function setupIntersectionObserver() {
-    observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting && visibleCount < filteredProjects.length) {
-                loadMoreProjects(BATCH_LOAD);
-            }
-        });
-    }, {
-        rootMargin: '200px'
-    });
-}
-
-function updateSentinel() {
-    let sentinel = document.getElementById('scroll-sentinel');
-    if (sentinel) {
-        observer.unobserve(sentinel);
-        sentinel.remove();
-    }
-
-    if (visibleCount < filteredProjects.length) {
-        sentinel = document.createElement('div');
-        sentinel.id = 'scroll-sentinel';
-        sentinel.style.height = '10px';
-        sentinel.style.width = '100%';
-        document.getElementById('portfolio-grid').appendChild(sentinel);
-        observer.observe(sentinel);
-    }
-}
-
-function toggleDetails(index) {
-    const detailsDiv = document.getElementById(`details-${index}`);
-    const btn = detailsDiv.previousElementSibling;
-    
-    if (detailsDiv.style.display === "none") {
-        detailsDiv.style.display = "block";
-        btn.innerText = "Hide Details";
-    } else {
-        detailsDiv.style.display = "none";
-        btn.innerText = "Read Full Details";
-    }
-}
-
-function formatMarkdownBody(bodyText) {
-    if (!bodyText) return "";
-
-    return bodyText
-        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
-        .replace(/(^|[^"'])((https?:\/\/[^\s<]+))/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$2</a>')
-        .replace(/\n\n/g, '<br><br>')
-        .replace(/\n/g, '<br>');
-}
-
-function filterProjects(category, btnElement) {
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    btnElement.classList.add('active');
-
-    if (category === 'ALL') {
-        filteredProjects = [...allProjects];
-    } else {
-        filteredProjects = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
-    }
-
-    resetAndRender();
-}
-
-function renderMessage(message) {
-    const grid = document.getElementById('portfolio-grid');
-    grid.innerHTML = `<p class="loading-text">${message}</p>`;
-}
