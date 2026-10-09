@@ -24,11 +24,10 @@ collections:
       - { label: "Video URL (YouTube, Vimeo, or MP4)", name: "video", widget: "string", required: false }
       - { label: "PDF Document", name: "pdf", widget: "file", required: false, media_library: { allow_multiple: false } }
       - { label: "PDF Cover Screenshot", name: "pdf_cover", widget: "image", required: false }
-      - { label: "Technic or materials", name: "excerpt", widget: "text" }
-      - label: "Full Project Details"
-        name: "body"
-        widget: "markdown"
-        pattern: ['^(\s*\S+){1,150}\s*$', "Full description cannot exceed 150 words."]
+      - { label: "3D Model (.glb, .gltf)", name: "model_3d", widget: "file", required: false }
+      - { label: "3D Model Cover Screenshot", name: "model_cover", widget: "image", required: false }
+      - { label: "Technic or materials", name: "excerpt", widget: "text", required: false }
+      - { label: "Full Project Details", name: "body", widget: "markdown", required: false }
 
   - name: "game_projects"
     label: "GAME Projects"
@@ -48,11 +47,8 @@ collections:
       - { label: "PDF Cover Screenshot", name: "pdf_cover", widget: "image", required: false }
       - { label: "3D Model (.glb, .gltf)", name: "model_3d", widget: "file", required: false }
       - { label: "3D Model Cover Screenshot", name: "model_cover", widget: "image", required: false }
-      - { label: "Technic or materials", name: "excerpt", widget: "text" }
-      - label: "Full Project Details"
-        name: "body"
-        widget: "markdown"
-        pattern: ['^(\s*\S+){1,150}\s*$', "Full description cannot exceed 150 words."]
+      - { label: "Technic or materials", name: "excerpt", widget: "text", required: false }
+      - { label: "Full Project Details", name: "body", widget: "markdown", required: false }
 
   - name: "nmc_projects"
     label: "NMC Projects"
@@ -70,8 +66,7 @@ collections:
       - { label: "Video URL (YouTube, Vimeo, or MP4)", name: "video", widget: "string", required: false }
       - { label: "PDF Document", name: "pdf", widget: "file", required: false, media_library: { allow_multiple: false } }
       - { label: "PDF Cover Screenshot", name: "pdf_cover", widget: "image", required: false }
-      - { label: "Technic or materials", name: "excerpt", widget: "text" }
-      - label: "Full Project Details"
-        name: "body"
-        widget: "markdown"
-        pattern: ['^(\s*\S+){1,150}\s*$', "Full description cannot exceed 150 words."]
+      - { label: "3D Model (.glb, .gltf)", name: "model_3d", widget: "file", required: false }
+      - { label: "3D Model Cover Screenshot", name: "model_cover", widget: "image", required: false }
+      - { label: "Technic or materials", name: "excerpt", widget: "text", required: false }
+      - { label: "Full Project Details", name: "body", widget: "markdown", required: false }
