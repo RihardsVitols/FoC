@@ -312,7 +312,7 @@ function setupIntersectionObserver() {
                 }
             });
         }, {
-            rootMargin: '50px' // Reduced so next batch loads smoothly when user nears the bottom
+            rootMargin: '50px'
         });
     }
 }
@@ -331,7 +331,6 @@ function updateSentinel() {
         sentinel.style.width = '100%';
         sentinel.style.clear = 'both';
 
-        // Insert directly AFTER the grid container to prevent early triggering
         const grid = document.getElementById('portfolio-grid');
         if (grid && grid.parentNode) {
             grid.parentNode.insertBefore(sentinel, grid.nextSibling);
@@ -358,4 +357,28 @@ function formatMarkdownBody(bodyText) {
     if (!bodyText) return "";
 
     return bodyText
-        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
+        .replace(/(^|[^"'])((https?:\/\/[^\s<]+))/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$2</a>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+}
+
+function filterProjects(category, btnElement) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnElement) btnElement.classList.add('active');
+
+    if (category === 'ALL') {
+        filteredProjects = [...allProjects];
+    } else {
+        filteredProjects = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
+    }
+
+    resetAndRender();
+}
+
+function renderMessage(message) {
+    const grid = document.getElementById('portfolio-grid');
+    if (grid) {
+        grid.innerHTML = `<p class="loading-text">${message}</p>`;
+    }
+}
