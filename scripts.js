@@ -5,6 +5,7 @@ const repo = "FoC";
 let allProjects = [];      
 let filteredProjects = []; 
 let visibleCount = 0;      
+let isLoading = false; // Guard flag to prevent duplicate batch triggers
 
 const INITIAL_LOAD = 9;   
 const BATCH_LOAD = 3;     
@@ -237,8 +238,14 @@ function resetAndRender() {
 }
 
 function loadMoreProjects(countToLoad) {
+    if (isLoading) return;
+    isLoading = true;
+
     const grid = document.getElementById('portfolio-grid');
-    if (!grid) return;
+    if (!grid) {
+        isLoading = false;
+        return;
+    }
 
     const nextBatch = filteredProjects.slice(visibleCount, visibleCount + countToLoad);
 
@@ -292,6 +299,7 @@ function loadMoreProjects(countToLoad) {
         visibleCount++;
     });
 
+    isLoading = false;
     updateSentinel();
 }
 
@@ -299,12 +307,12 @@ function setupIntersectionObserver() {
     if ('IntersectionObserver' in window) {
         observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting && visibleCount < filteredProjects.length) {
+                if (entry.isIntersecting && visibleCount < filteredProjects.length && !isLoading) {
                     loadMoreProjects(BATCH_LOAD);
                 }
             });
         }, {
-            rootMargin: '200px'
+            rootMargin: '50px' // Reduced so next batch loads smoothly when user nears the bottom
         });
     }
 }
@@ -319,11 +327,14 @@ function updateSentinel() {
     if (visibleCount < filteredProjects.length) {
         sentinel = document.createElement('div');
         sentinel.id = 'scroll-sentinel';
-        sentinel.style.height = '10px';
+        sentinel.style.height = '20px';
         sentinel.style.width = '100%';
+        sentinel.style.clear = 'both';
+
+        // Insert directly AFTER the grid container to prevent early triggering
         const grid = document.getElementById('portfolio-grid');
-        if (grid) {
-            grid.appendChild(sentinel);
+        if (grid && grid.parentNode) {
+            grid.parentNode.insertBefore(sentinel, grid.nextSibling);
             if (observer) observer.observe(sentinel);
         }
     }
@@ -347,28 +358,4 @@ function formatMarkdownBody(bodyText) {
     if (!bodyText) return "";
 
     return bodyText
-        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
-        .replace(/(^|[^"'])((https?:\/\/[^\s<]+))/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$2</a>')
-        .replace(/\n\n/g, '<br><br>')
-        .replace(/\n/g, '<br>');
-}
-
-function filterProjects(category, btnElement) {
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    if (btnElement) btnElement.classList.add('active');
-
-    if (category === 'ALL') {
-        filteredProjects = [...allProjects];
-    } else {
-        filteredProjects = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
-    }
-
-    resetAndRender();
-}
-
-function renderMessage(message) {
-    const grid = document.getElementById('portfolio-grid');
-    if (grid) {
-        grid.innerHTML = `<p class="loading-text">${message}</p>`;
-    }
-}
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-
