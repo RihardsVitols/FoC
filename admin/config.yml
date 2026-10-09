@@ -46,6 +46,8 @@ collections:
       - { label: "Video URL (YouTube, Vimeo, or MP4)", name: "video", widget: "string", required: false }
       - { label: "PDF Document", name: "pdf", widget: "file", required: false, media_library: { allow_multiple: false } }
       - { label: "PDF Cover Screenshot", name: "pdf_cover", widget: "image", required: false }
+      - { label: "3D Model (.glb, .gltf)", name: "model_3d", widget: "file", required: false }
+      - { label: "3D Model Cover Screenshot", name: "model_cover", widget: "image", required: false }
       - { label: "Technic or materials", name: "excerpt", widget: "text" }
       - label: "Full Project Details"
         name: "body"
