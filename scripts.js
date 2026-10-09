@@ -9,36 +9,44 @@ let visibleCount = 0;
 const INITIAL_LOAD = 9;   
 const BATCH_LOAD = 3;     
 
-let observer; 
+let observer = null; 
 
 document.addEventListener("DOMContentLoaded", () => {
     setupIntersectionObserver();
     fetchProjects();
     
     // Bind Fancybox 5 with isolated items and disabled navigation arrows
-    Fancybox.bind("[data-fancybox]", {
-        infinite: false,
-        Navigation: false,
-        iframe: {
-            preload: false,
-            attr: {
-                scrolling: "auto"
+    if (typeof Fancybox !== "undefined") {
+        Fancybox.bind("[data-fancybox]", {
+            infinite: false,
+            Navigation: false,
+            iframe: {
+                preload: false,
+                attr: {
+                    scrolling: "auto"
+                }
             }
-        }
-    });
+        });
+    }
 });
 
 function fetchProjects() {
+    console.log("Fetching projects from GitHub...");
     fetch(`https://api.github.com/repos/${username}/${repo}/contents/content/projects`)
         .then(res => {
-            if (!res.ok) throw new Error("No content directory found");
+            if (!res.ok) throw new Error(`GitHub API Error (${res.status})`);
             return res.json();
         })
         .then(files => {
+            if (!Array.isArray(files)) {
+                renderMessage("Unable to load project directory.");
+                return;
+            }
+
             const mdFiles = files.filter(f => f.name.endsWith('.md'));
             
             if (mdFiles.length === 0) {
-                renderMessage("No published projects yet.");
+                renderMessage("No published projects found.");
                 return;
             }
 
@@ -46,13 +54,18 @@ function fetchProjects() {
                 fetch(file.download_url)
                     .then(res => res.text())
                     .then(text => parseMarkdownFrontMatter(text))
+                    .catch(err => {
+                        console.error("Failed to load project file:", err);
+                        return null;
+                    })
             );
 
             return Promise.all(fetchPromises);
         })
         .then(projects => {
             if (projects) {
-                allProjects = projects.sort((a, b) => {
+                const validProjects = projects.filter(p => p !== null);
+                allProjects = validProjects.sort((a, b) => {
                     const dateA = a.rawDate ? new Date(a.rawDate) : 0;
                     const dateB = b.rawDate ? new Date(b.rawDate) : 0;
                     return dateB - dateA;
@@ -63,7 +76,7 @@ function fetchProjects() {
         })
         .catch(err => {
             console.error("Error loading projects:", err);
-            renderMessage("No projects published in content/projects yet.");
+            renderMessage(`Error loading projects: ${err.message}`);
         });
 }
 
@@ -177,7 +190,6 @@ function renderVideoEmbed(url) {
     return "";
 }
 
-// Render PDF Screenshot Cover on Card Grid
 function renderPdfThumbnail(pdfUrl, coverImgUrl, title, index) {
     if (!pdfUrl) return "";
 
@@ -191,13 +203,11 @@ function renderPdfThumbnail(pdfUrl, coverImgUrl, title, index) {
         </div>`;
 }
 
-// Render 3D Model Card Thumbnail & Interactive Fancybox Lightbox
 function render3DModelCard(modelUrl, coverImgUrl, title, index) {
     if (!modelUrl) return "";
 
     const previewImage = coverImgUrl || 'images/default-3d-cover.png';
 
-    // Injects interactive Google <model-viewer> into Fancybox popup
     const modelHTML = `
         <div class="fancybox-3d-wrapper">
             <model-viewer src="${modelUrl}" alt="${title}" camera-controls auto-rotate shadow-intensity="1" ar></model-viewer>
@@ -214,6 +224,7 @@ function render3DModelCard(modelUrl, coverImgUrl, title, index) {
 
 function resetAndRender() {
     const grid = document.getElementById('portfolio-grid');
+    if (!grid) return;
     grid.innerHTML = '';
     visibleCount = 0;
 
@@ -227,6 +238,8 @@ function resetAndRender() {
 
 function loadMoreProjects(countToLoad) {
     const grid = document.getElementById('portfolio-grid');
+    if (!grid) return;
+
     const nextBatch = filteredProjects.slice(visibleCount, visibleCount + countToLoad);
 
     nextBatch.forEach((project) => {
@@ -244,3 +257,118 @@ function loadMoreProjects(countToLoad) {
         let mediaHTML = "";
         if (project.image) {
             mediaHTML = `
+                <div class="image-container">
+                    <a href="${project.image}" data-fancybox="project-${index}" data-caption="${project.title}">
+                        <img src="${project.image}" alt="${project.title}" loading="lazy">
+                    </a>
+                </div>`;
+        } else if (project.model3d) {
+            mediaHTML = render3DModelCard(project.model3d, project.modelCover || project.image, project.title, index);
+        } else if (project.video) {
+            mediaHTML = renderVideoEmbed(project.video);
+        } else if (project.pdf) {
+            mediaHTML = renderPdfThumbnail(project.pdf, project.pdfCover || project.image, project.title, index);
+        }
+
+        card.innerHTML = `
+            ${mediaHTML}
+            
+            <div class="meta">${metaText}</div>
+            <h2 class="project-title">${project.title}</h2>
+            <p class="excerpt">${project.excerpt}</p>
+
+            ${project.pdf && (project.image || project.video || project.model3d) ? `
+                <a href="${project.pdf}" data-fancybox="project-${index}" data-type="pdf" data-caption="${project.title}" class="pdf-link-btn">📄 View Attached PDF</a>
+            ` : ''}
+            
+            ${project.body ? `
+                <button class="toggle-btn" onclick="toggleDetails(${index})">Read Full Details</button>
+                <div id="details-${index}" class="full-details" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                    ${formatMarkdownBody(project.body)}
+                </div>
+            ` : ''}
+        `;
+        grid.appendChild(card);
+        visibleCount++;
+    });
+
+    updateSentinel();
+}
+
+function setupIntersectionObserver() {
+    if ('IntersectionObserver' in window) {
+        observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && visibleCount < filteredProjects.length) {
+                    loadMoreProjects(BATCH_LOAD);
+                }
+            });
+        }, {
+            rootMargin: '200px'
+        });
+    }
+}
+
+function updateSentinel() {
+    let sentinel = document.getElementById('scroll-sentinel');
+    if (sentinel) {
+        if (observer) observer.unobserve(sentinel);
+        sentinel.remove();
+    }
+
+    if (visibleCount < filteredProjects.length) {
+        sentinel = document.createElement('div');
+        sentinel.id = 'scroll-sentinel';
+        sentinel.style.height = '10px';
+        sentinel.style.width = '100%';
+        const grid = document.getElementById('portfolio-grid');
+        if (grid) {
+            grid.appendChild(sentinel);
+            if (observer) observer.observe(sentinel);
+        }
+    }
+}
+
+function toggleDetails(index) {
+    const detailsDiv = document.getElementById(`details-${index}`);
+    if (!detailsDiv) return;
+    const btn = detailsDiv.previousElementSibling;
+    
+    if (detailsDiv.style.display === "none") {
+        detailsDiv.style.display = "block";
+        btn.innerText = "Hide Details";
+    } else {
+        detailsDiv.style.display = "none";
+        btn.innerText = "Read Full Details";
+    }
+}
+
+function formatMarkdownBody(bodyText) {
+    if (!bodyText) return "";
+
+    return bodyText
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
+        .replace(/(^|[^"'])((https?:\/\/[^\s<]+))/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$2</a>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+}
+
+function filterProjects(category, btnElement) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnElement) btnElement.classList.add('active');
+
+    if (category === 'ALL') {
+        filteredProjects = [...allProjects];
+    } else {
+        filteredProjects = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
+    }
+
+    resetAndRender();
+}
+
+function renderMessage(message) {
+    const grid = document.getElementById('portfolio-grid');
+    if (grid) {
+        grid.innerHTML = `<p class="loading-text">${message}</p>`;
+    }
+}
