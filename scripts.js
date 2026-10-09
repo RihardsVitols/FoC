@@ -266,4 +266,129 @@ function loadMoreProjects(countToLoad) {
         const metaParts = [];
         if (project.author) metaParts.push(project.author);
         if (project.category) metaParts.push(project.category);
-        if (project.date) metaParts.
+        if (project.date) metaParts.push(project.date);
+
+        const metaText = metaParts.join(" • ");
+
+        let mediaHTML = "";
+        // Priority order: 3D Model > Video > Image > PDF
+        if (project.model3d) {
+            mediaHTML = render3DModelCard(project.model3d, project.modelCover || project.image, project.title, index);
+        } else if (project.video) {
+            mediaHTML = renderVideoEmbed(project.video);
+        } else if (project.image) {
+            mediaHTML = `
+                <div class="image-container">
+                    <a href="${project.image}" data-fancybox="project-${index}" data-caption="${project.title}">
+                        <img src="${project.image}" alt="${project.title}" loading="lazy">
+                    </a>
+                </div>`;
+        } else if (project.pdf) {
+            mediaHTML = renderPdfThumbnail(project.pdf, project.pdfCover, project.title, index);
+        }
+
+        card.innerHTML = `
+            ${mediaHTML}
+            
+            <div class="meta">${metaText}</div>
+            <h2 class="project-title">${project.title}</h2>
+            <p class="excerpt">${project.excerpt}</p>
+
+            ${project.pdf && (project.image || project.video || project.model3d) ? `
+                <a href="${project.pdf}" data-fancybox="project-${index}" data-type="pdf" data-caption="${project.title}" class="pdf-link-btn">📄 View Attached PDF</a>
+            ` : ''}
+            
+            ${project.body ? `
+                <button class="toggle-btn" onclick="toggleDetails(${index})">Read Full Details</button>
+                <div id="details-${index}" class="full-details" style="display: none; margin-top: 15px; border-top: 1px solid #eee; padding-top: 10px;">
+                    ${formatMarkdownBody(project.body)}
+                </div>
+            ` : ''}
+        `;
+        grid.appendChild(card);
+        visibleCount++;
+    });
+
+    isLoading = false;
+    updateSentinel();
+}
+
+function setupIntersectionObserver() {
+    if ('IntersectionObserver' in window) {
+        observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && visibleCount < filteredProjects.length && !isLoading) {
+                    loadMoreProjects(BATCH_LOAD);
+                }
+            });
+        }, {
+            rootMargin: '50px'
+        });
+    }
+}
+
+function updateSentinel() {
+    let sentinel = document.getElementById('scroll-sentinel');
+    if (sentinel) {
+        if (observer) observer.unobserve(sentinel);
+        sentinel.remove();
+    }
+
+    if (visibleCount < filteredProjects.length) {
+        sentinel = document.createElement('div');
+        sentinel.id = 'scroll-sentinel';
+        sentinel.style.height = '20px';
+        sentinel.style.width = '100%';
+        sentinel.style.clear = 'both';
+
+        const grid = document.getElementById('portfolio-grid');
+        if (grid && grid.parentNode) {
+            grid.parentNode.insertBefore(sentinel, grid.nextSibling);
+            if (observer) observer.observe(sentinel);
+        }
+    }
+}
+
+function toggleDetails(index) {
+    const detailsDiv = document.getElementById(`details-${index}`);
+    if (!detailsDiv) return;
+    const btn = detailsDiv.previousElementSibling;
+    
+    if (detailsDiv.style.display === "none") {
+        detailsDiv.style.display = "block";
+        btn.innerText = "Hide Details";
+    } else {
+        detailsDiv.style.display = "none";
+        btn.innerText = "Read Full Details";
+    }
+}
+
+function formatMarkdownBody(bodyText) {
+    if (!bodyText) return "";
+
+    return bodyText
+        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
+        .replace(/(^|[^"'])((https?:\/\/[^\s<]+))/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$2</a>')
+        .replace(/\n\n/g, '<br><br>')
+        .replace(/\n/g, '<br>');
+}
+
+function filterProjects(category, btnElement) {
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    if (btnElement) btnElement.classList.add('active');
+
+    if (category === 'ALL') {
+        filteredProjects = [...allProjects];
+    } else {
+        filteredProjects = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
+    }
+
+    resetAndRender();
+}
+
+function renderMessage(message) {
+    const grid = document.getElementById('portfolio-grid');
+    if (grid) {
+        grid.innerHTML = `<p class="loading-text">${message}</p>`;
+    }
+}
