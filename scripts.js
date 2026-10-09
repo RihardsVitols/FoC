@@ -216,7 +216,7 @@ function render3DModelCard(modelUrl, coverImgUrl, title, index) {
 
     return `
         <div class="image-container">
-            <a href="javascript:;" data-fancybox="project-${index}" data-src='${modelHTML}' data-caption="${title}">
+            <a href="javascript:;" data-fancybox="project-${index}" data-type="html" data-src='${modelHTML}' data-caption="${title}">
                 <img src="${previewImage}" alt="${title}" loading="lazy">
                 <span class="badge-3d">📦 3D Model</span>
             </a>
@@ -262,19 +262,20 @@ function loadMoreProjects(countToLoad) {
         const metaText = metaParts.join(" • ");
 
         let mediaHTML = "";
-        if (project.image) {
+        // Priority order: 3D Model > Video > Image > PDF
+        if (project.model3d) {
+            mediaHTML = render3DModelCard(project.model3d, project.modelCover || project.image, project.title, index);
+        } else if (project.video) {
+            mediaHTML = renderVideoEmbed(project.video);
+        } else if (project.image) {
             mediaHTML = `
                 <div class="image-container">
                     <a href="${project.image}" data-fancybox="project-${index}" data-caption="${project.title}">
                         <img src="${project.image}" alt="${project.title}" loading="lazy">
                     </a>
                 </div>`;
-        } else if (project.model3d) {
-            mediaHTML = render3DModelCard(project.model3d, project.modelCover || project.image, project.title, index);
-        } else if (project.video) {
-            mediaHTML = renderVideoEmbed(project.video);
         } else if (project.pdf) {
-            mediaHTML = renderPdfThumbnail(project.pdf, project.pdfCover || project.image, project.title, index);
+            mediaHTML = renderPdfThumbnail(project.pdf, project.pdfCover, project.title, index);
         }
 
         card.innerHTML = `
