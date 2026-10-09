@@ -209,9 +209,10 @@ function render3DModelCard(modelUrl, coverImgUrl, title, index) {
 
     const previewImage = coverImgUrl || 'images/default-3d-cover.png';
 
+    // Added bounds="tight" and explicit styling to prevent zero-height rendering
     const modelHTML = `
         <div class="fancybox-3d-wrapper">
-            <model-viewer src="${modelUrl}" alt="${title}" camera-controls auto-rotate shadow-intensity="1" ar></model-viewer>
+            <model-viewer id="active-3d-viewer" src="${modelUrl}" alt="${title}" camera-controls auto-rotate shadow-intensity="1" bounds="tight" style="width:100%; height:100%;"></model-viewer>
         </div>`;
 
     return `
@@ -222,7 +223,6 @@ function render3DModelCard(modelUrl, coverImgUrl, title, index) {
             </a>
         </div>`;
 }
-
 function resetAndRender() {
     const grid = document.getElementById('portfolio-grid');
     if (!grid) return;
