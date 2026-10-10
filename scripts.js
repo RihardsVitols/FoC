@@ -153,12 +153,12 @@ function parseMarkdownFrontMatter(text) {
         }
     }
 
-    // Interactive Web URL Path Formatting
-    let interactiveUrl = getField("interactive_url");
-    if (interactiveUrl) {
-        if (interactiveUrl.startsWith('/')) interactiveUrl = interactiveUrl.substring(1);
-        if (!interactiveUrl.startsWith('http')) {
-            interactiveUrl = `https://rihardsvitols.github.io/FoC/${interactiveUrl}`;
+    // Interactive Web Zip Path Formatting
+    let interactiveZipPath = getField("interactive_zip");
+    if (interactiveZipPath) {
+        if (interactiveZipPath.startsWith('/')) interactiveZipPath = interactiveZipPath.substring(1);
+        if (!interactiveZipPath.startsWith('http')) {
+            interactiveZipPath = `https://rihardsvitols.github.io/FoC/${interactiveZipPath}`;
         }
     }
 
@@ -186,7 +186,7 @@ function parseMarkdownFrontMatter(text) {
         pdfCover: pdfCoverPath || "",
         model3d: model3dPath || "",
         modelCover: modelCoverPath || "",
-        interactiveUrl: interactiveUrl || "",
+        interactiveZip: interactiveZipPath || "",
         interactiveCover: interactiveCoverPath || "",
         excerpt: getField("excerpt") || "",
         body: bodyContent
@@ -260,16 +260,16 @@ function render3DModelCard(modelUrl, coverImgUrl, title, index) {
         </div>`;
 }
 
-function renderInteractiveCard(interactiveUrl, coverImgUrl, title) {
-    if (!interactiveUrl) return "";
+function renderInteractiveCard(zipUrl, coverImgUrl, title) {
+    if (!zipUrl) return "";
 
     const previewImage = coverImgUrl || 'images/default-interactive-cover.png';
 
     return `
         <div class="image-container">
-            <a href="${interactiveUrl}" target="_blank" rel="noopener noreferrer" data-caption="${title}">
+            <a href="${zipUrl}" target="_blank" rel="noopener noreferrer" download data-caption="${title}">
                 <img src="${previewImage}" alt="${title}" loading="lazy">
-                <span class="badge-interactive">🌐 Interactive Web</span>
+                <span class="badge-interactive"> Download Web Build (.zip)</span>
             </a>
         </div>`;
 }
@@ -313,9 +313,9 @@ function loadMoreProjects(countToLoad) {
         const metaText = metaParts.join(" • ");
 
         let mediaHTML = "";
-        // Priority order: Interactive Web > 3D Model > Video > Image > PDF
-        if (project.interactiveUrl) {
-            mediaHTML = renderInteractiveCard(project.interactiveUrl, project.interactiveCover || project.image, project.title);
+        // Priority order: Interactive Zip > 3D Model > Video > Image > PDF
+        if (project.interactiveZip) {
+            mediaHTML = renderInteractiveCard(project.interactiveZip, project.interactiveCover || project.image, project.title);
         } else if (project.model3d) {
             mediaHTML = render3DModelCard(project.model3d, project.modelCover || project.image, project.title, index);
         } else if (project.video) {
@@ -338,7 +338,7 @@ function loadMoreProjects(countToLoad) {
             <h2 class="project-title">${project.title}</h2>
             <p class="excerpt">${project.excerpt}</p>
 
-            ${project.pdf && (project.image || project.video || project.model3d || project.interactiveUrl) ? `
+            ${project.pdf && (project.image || project.video || project.model3d || project.interactiveZip) ? `
                 <a href="${project.pdf}" data-fancybox="project-${index}" data-type="pdf" data-caption="${project.title}" class="pdf-link-btn">📄 View Attached PDF</a>
             ` : ''}
             
