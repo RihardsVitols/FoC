@@ -27,6 +27,14 @@ document.addEventListener("DOMContentLoaded", () => {
                     scrolling: "auto"
                 }
             },
+            // Prevents the lightbox container from panning/moving when dragging the 3D model
+            Carousel: {
+                Panzoom: {
+                    touch: (panzoom, event) => {
+                        return event?.target.nodeName === "MODEL-VIEWER" ? false : true;
+                    }
+                }
+            },
             on: {
                 done: (fancybox, slide) => {
                     // Forces model-viewer to re-evaluate dimensions once lightbox transition completes
