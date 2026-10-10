@@ -12,17 +12,6 @@ const BATCH_LOAD = 3;
 
 let observer = null; 
 
-// Register Meshopt Decoder with Three.js / model-viewer if available
-if (typeof MeshoptDecoder !== "undefined") {
-    if (typeof MeshoptDecoder.ready !== "undefined") {
-        MeshoptDecoder.ready.then(() => {
-            if (window.THREE && window.THREE.GLTFLoader) {
-                window.THREE.GLTFLoader.setMeshoptDecoder(MeshoptDecoder);
-            }
-        });
-    }
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     setupIntersectionObserver();
     fetchProjects();
@@ -229,9 +218,19 @@ function render3DModelCard(modelUrl, coverImgUrl, title, index) {
 
     const previewImage = coverImgUrl || 'images/default-3d-cover.png';
 
+    // Added meshopt-decoder-url attribute directly to handle decompression natively
     const modelHTML = `
         <div class="fancybox-3d-wrapper">
-            <model-viewer src="${modelUrl}" alt="${title}" camera-controls auto-rotate shadow-intensity="1" bounds="tight" style="width:100%; height:100%;"></model-viewer>
+            <model-viewer 
+                src="${modelUrl}" 
+                alt="${title}" 
+                camera-controls 
+                auto-rotate 
+                shadow-intensity="1" 
+                bounds="tight" 
+                meshopt-decoder-url="https://cdn.jsdelivr.net/npm/meshoptimizer@0.19.0/meshopt_decoder.js"
+                style="width:100%; height:100%;">
+            </model-viewer>
         </div>`;
 
     return `
@@ -378,7 +377,7 @@ function formatMarkdownBody(bodyText) {
     if (!bodyText) return "";
 
     return bodyText
-        .replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
+        .replace(/\[([^\]]+)\]\((https?:\r?\n?[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$1</a>')
         .replace(/(^|[^"'])((https?:\/\/[^\s<]+))/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="project-link">$2</a>')
         .replace(/\n\n/g, '<br><br>')
         .replace(/\n/g, '<br>');
