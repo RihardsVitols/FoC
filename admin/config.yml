@@ -27,7 +27,7 @@ collections:
       - { label: "3D Model Cover Screenshot", name: "model_cover", widget: "image", required: false }
       - { label: "3D Model (.glb, .gltf)", name: "model_3d", widget: "file", required: false }
       - { label: "Interactive Web Cover Image", name: "interactive_cover", widget: "image", required: false }
-      - { label: "Interactive Web Path (e.g. content/interactive/my-project/index.html)", name: "interactive_url", widget: "string", required: false }
+      - { label: "Interactive Web Build (.zip)", name: "interactive_zip", widget: "file", required: false, media_library: { allow_multiple: false } }
       - { label: "Technic or materials", name: "excerpt", widget: "text", required: false }
       - { label: "Full Project Details", name: "body", widget: "markdown", required: false }
 
@@ -50,7 +50,7 @@ collections:
       - { label: "3D Model Cover Screenshot", name: "model_cover", widget: "image", required: false }
       - { label: "3D Model (.glb, .gltf)", name: "model_3d", widget: "file", required: false }
       - { label: "Interactive Web Cover Image", name: "interactive_cover", widget: "image", required: false }
-      - { label: "Interactive Web Path (e.g. content/interactive/my-project/index.html)", name: "interactive_url", widget: "string", required: false }
+      - { label: "Interactive Web Build (.zip)", name: "interactive_zip", widget: "file", required: false, media_library: { allow_multiple: false } }
       - { label: "Technic or materials", name: "excerpt", widget: "text", required: false }
       - { label: "Full Project Details", name: "body", widget: "markdown", required: false }
 
@@ -73,6 +73,6 @@ collections:
       - { label: "3D Model Cover Screenshot", name: "model_cover", widget: "image", required: false }
       - { label: "3D Model (.glb, .gltf)", name: "model_3d", widget: "file", required: false }
       - { label: "Interactive Web Cover Image", name: "interactive_cover", widget: "image", required: false }
-      - { label: "Interactive Web Path (e.g. content/interactive/my-project/index.html)", name: "interactive_url", widget: "string", required: false }
+      - { label: "Interactive Web Build (.zip)", name: "interactive_zip", widget: "file", required: false, media_library: { allow_multiple: false } }
       - { label: "Technic or materials", name: "excerpt", widget: "text", required: false }
       - { label: "Full Project Details", name: "body", widget: "markdown", required: false }
