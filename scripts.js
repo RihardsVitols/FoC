@@ -7,8 +7,8 @@ let filteredProjects = [];
 let visibleCount = 0;      
 let isLoading = false; // Guard flag to prevent duplicate batch triggers
 
-const INITIAL_LOAD = 9;   
-const BATCH_LOAD = 3;     
+const INITIAL_LOAD = 9;   // preloaded works
+const BATCH_LOAD = 3;     // load on scroll down next 3
 
 let observer = null; 
 
