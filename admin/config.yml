@@ -86,11 +86,11 @@ collections:
     sortable_fields: ["title", "author", "date"]
     fields:
       - label: "Department"
-          name: "finals_type"
-          widget: "select"
-          options: ["VCD", "GAME", "NMC"]
-          default: "VCD"
-          required: true
+        name: "finals_type"
+        widget: "select"
+        options: ["VCD", "GAME", "NMC"]
+        default: "VCD"
+        required: true
       - { label: "Title", name: "title", widget: "string" }
       - { label: "Student Name / Author", name: "author", widget: "string" }
       - { label: "Date created", name: "date", widget: "datetime", format: "YYYY", dateFormat: "YYYY", timeFormat: false }
