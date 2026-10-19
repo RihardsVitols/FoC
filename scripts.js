@@ -50,52 +50,54 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function fetchProjects() {
     console.log("Fetching projects from GitHub...");
-    fetch(`https://api.github.com/repos/${username}/${repo}/contents/content/projects`)
-        .then(res => {
-            if (!res.ok) throw new Error(`GitHub API Error (${res.status})`);
-            return res.json();
-        })
-        .then(files => {
-            if (!Array.isArray(files)) {
-                renderMessage("Unable to load project directory.");
-                return;
-            }
 
-            const mdFiles = files.filter(f => f.name.endsWith('.md'));
-            
-            if (mdFiles.length === 0) {
-                renderMessage("No published projects found.");
-                return;
-            }
+    const projectsFolder = `https://api.github.com/repos/${username}/${repo}/contents/content/projects`;
+    const finalsFolder   = `https://api.github.com/repos/${username}/${repo}/contents/content/finals`;
 
-            const fetchPromises = mdFiles.map(file =>
-                fetch(file.download_url)
-                    .then(res => res.text())
-                    .then(text => parseMarkdownFrontMatter(text))
-                    .catch(err => {
-                        console.error("Failed to load project file:", err);
-                        return null;
-                    })
-            );
+    Promise.allSettled([
+        fetch(projectsFolder).then(res => res.ok ? res.json() : []),
+        fetch(finalsFolder).then(res => res.ok ? res.json() : [])
+    ])
+    .then(results => {
+        const files1 = results[0].status === 'fulfilled' && Array.isArray(results[0].value) ? results[0].value : [];
+        const files2 = results[1].status === 'fulfilled' && Array.isArray(results[1].value) ? results[1].value : [];
+        
+        const allFiles = [...files1, ...files2];
+        const mdFiles = allFiles.filter(f => f.name && f.name.endsWith('.md'));
 
-            return Promise.all(fetchPromises);
-        })
-        .then(projects => {
-            if (projects) {
-                const validProjects = projects.filter(p => p !== null);
-                allProjects = validProjects.sort((a, b) => {
-                    const dateA = a.rawDate ? new Date(a.rawDate) : 0;
-                    const dateB = b.rawDate ? new Date(b.rawDate) : 0;
-                    return dateB - dateA;
-                });
-                filteredProjects = [...allProjects];
-                resetAndRender();
-            }
-        })
-        .catch(err => {
-            console.error("Error loading projects:", err);
-            renderMessage(`Error loading projects: ${err.message}`);
-        });
+        if (mdFiles.length === 0) {
+            renderMessage("No published projects found.");
+            return [];
+        }
+
+        const fetchPromises = mdFiles.map(file =>
+            fetch(file.download_url)
+                .then(res => res.text())
+                .then(text => parseMarkdownFrontMatter(text))
+                .catch(err => {
+                    console.error("Failed to load project file:", err);
+                    return null;
+                })
+        );
+
+        return Promise.all(fetchPromises);
+    })
+    .then(projects => {
+        if (projects) {
+            const validProjects = projects.filter(p => p !== null);
+            allProjects = validProjects.sort((a, b) => {
+                const dateA = a.rawDate ? new Date(a.rawDate) : 0;
+                const dateB = b.rawDate ? new Date(b.rawDate) : 0;
+                return dateB - dateA;
+            });
+            filteredProjects = [...allProjects];
+            resetAndRender();
+        }
+    })
+    .catch(err => {
+        console.error("Error loading projects:", err);
+        renderMessage(`Error loading projects: ${err.message}`);
+    });
 }
 
 function parseMarkdownFrontMatter(text) {
@@ -180,6 +182,7 @@ function parseMarkdownFrontMatter(text) {
         rawDate: rawDate,
         date: yearOnly,
         category: getField("category") || "Uncategorized",
+        finalsType: getField("finals_type") || "",
         image: imagePath || "",
         video: getField("video") || "",
         pdf: pdfPath || "",
@@ -267,7 +270,10 @@ function renderInteractiveCard(interactiveUrl, coverImgUrl, title) {
 
     return `
         <div class="image-container">
-            <a href="${interactiveUrl}" target="_blank" rel="noopener noreferrer" data-caption="${title}">
+            <a href="${interactiveUrl}" target="_blank" rel="noopener noreferrer" 
+               data-caption="${title}"
+               data-umami-event="Play Interactive Web Game"
+               data-umami-event-title="${title}">
                 <img src="${previewImage}" alt="${title}" loading="lazy">
                 <span class="badge-interactive">🌐 Interactive Web</span>
             </a>
@@ -307,9 +313,14 @@ function loadMoreProjects(countToLoad) {
         
         const metaParts = [];
         if (project.author) metaParts.push(project.author);
-        if (project.category) metaParts.push(project.category);
-        if (project.date) metaParts.push(project.date);
 
+        if (project.category === "Finals" && project.finalsType) {
+            metaParts.push(`Finals (${project.finalsType})`);
+        } else if (project.category) {
+            metaParts.push(project.category);
+        }
+
+        if (project.date) metaParts.push(project.date);
         const metaText = metaParts.join(" • ");
 
         let mediaHTML = "";
@@ -339,7 +350,10 @@ function loadMoreProjects(countToLoad) {
             <p class="excerpt">${project.excerpt}</p>
 
             ${project.pdf && (project.image || project.video || project.model3d || project.interactiveUrl) ? `
-                <a href="${project.pdf}" data-fancybox="project-${index}" data-type="pdf" data-caption="${project.title}" class="pdf-link-btn">📄 View Attached PDF</a>
+                <a href="${project.pdf}" data-fancybox="project-${index}" data-type="pdf" data-caption="${project.title}" 
+                   data-umami-event="View Attached PDF" 
+                   data-umami-event-title="${project.title}" 
+                   class="pdf-link-btn">📄 View Attached PDF</a>
             ` : ''}
             
             ${project.body ? `
@@ -421,10 +435,18 @@ function filterProjects(category, btnElement) {
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     if (btnElement) btnElement.classList.add('active');
 
-    if (category === 'ALL') {
+    const catUpper = category.toUpperCase();
+
+    if (catUpper === 'ALL') {
         filteredProjects = [...allProjects];
+    } else if (catUpper === 'FINALS') {
+        filteredProjects = allProjects.filter(p => p.category.toUpperCase() === 'FINALS');
     } else {
-        filteredProjects = allProjects.filter(p => p.category.toUpperCase().includes(category.toUpperCase()));
+        filteredProjects = allProjects.filter(p => {
+            const mainCatMatches = p.category.toUpperCase().includes(catUpper);
+            const finalsSubMatches = p.category.toUpperCase() === 'FINALS' && p.finalsType.toUpperCase() === catUpper;
+            return mainCatMatches || finalsSubMatches;
+        });
     }
 
     resetAndRender();
