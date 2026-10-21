@@ -366,7 +366,7 @@ footer {
         display: flex;
         justify-content: center;   /* Centers Instagram logo under the navigation */
         width: 100%;
-        margin-top: 5px;
+        margin-top: 2px;
     }
 
     .site-title {
@@ -375,12 +375,12 @@ footer {
     }
     
     .site-logo {
-        height: 36px;
+        height: 40px;
     }
 
     .portfolio-grid {
         grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 15px;
     }
 
     .image-container,
