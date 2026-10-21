@@ -339,13 +339,13 @@ footer {
         align-items: center;       /* Centers brand logo & text horizontally */
         text-align: center;
         gap: 15px;
-        padding-top: 15px;
+        padding-top: 20px;
     }
 
     .brand {
         flex-direction: column;    /* Stacks ARUCAD logo above Faculty title */
         align-items: center;
-        gap: 8px;
+        gap: 15px;
     }
 
     .header-right {
