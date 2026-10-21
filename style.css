@@ -294,6 +294,42 @@ footer {
     display: block;
 }
 
+/* Container for category filters + social icons on the right */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+/* Vertical stack for social icons */
+.social-links {
+    display: flex;
+    flex-direction: column;   /* Stacks icons vertically */
+    align-items: center;      /* Centers icons horizontally relative to each other */
+    justify-content: center;
+    gap: 8px;                 /* Space between stacked icons */
+}
+
+.social-links a {
+    color: var(--text-color, #484d51);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.social-links a:hover {
+    color: #000000;
+    transform: scale(1.1);
+}
+
+.social-links svg,
+.social-links img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
 /* Mobile Responsive Adjustments */
 @media (max-width: 768px) {
     .container {
@@ -302,17 +338,37 @@ footer {
 
     header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;       /* Centers brand logo & text horizontally */
+        text-align: center;
         gap: 15px;
         padding-top: 15px;
     }
 
+    .brand {
+        flex-direction: column;    /* Stacks ARUCAD logo above Faculty title */
+        align-items: center;
+        gap: 8px;
+    }
+
+    .header-right {
+        flex-direction: column;    /* Stacks filter buttons above Instagram logo */
+        align-items: center;       /* Centers everything horizontally */
+        width: 100%;
+        gap: 15px;
+    }
+
     .filter-container {
         width: 100%;
-        overflow-x: auto;
-        white-space: nowrap;
-        padding-bottom: 5px;
-        gap: 15px;
+        justify-content: center;   /* Centers filter buttons horizontally */
+        flex-wrap: wrap;           /* Allows buttons to wrap neatly if needed */
+        gap: 12px;
+    }
+
+    .social-links {
+        display: flex;
+        justify-content: center;   /* Centers Instagram logo under the navigation */
+        width: 100%;
+        margin-top: 5px;
     }
 
     .site-title {
