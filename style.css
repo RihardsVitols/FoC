@@ -61,6 +61,40 @@ header {
     display: block;
 }
 
+/* Desktop Right Header Layout */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+/* Desktop Social Links Vertical Stack */
+.social-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.social-links a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.social-links a:hover {
+    transform: scale(1.1);
+    opacity: 0.8;
+}
+
+.social-links img {
+    width: 20px;
+    height: 20px;
+    display: block;
+}
+
 nav a {
     color: var(--muted-color);
     text-decoration: none;
@@ -291,42 +325,6 @@ footer {
     width: 100%;
     height: 100%;
     background-color: #f8f9fa;
-    display: block;
-}
-
-/* Container for category filters + social icons on the right */
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 25px;
-}
-
-/* Vertical stack for social icons */
-.social-links {
-    display: flex;
-    flex-direction: column;   /* Stacks icons vertically */
-    align-items: center;      /* Centers icons horizontally relative to each other */
-    justify-content: center;
-    gap: 8px;                 /* Space between stacked icons */
-}
-
-.social-links a {
-    color: var(--text-color, #484d51);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.social-links a:hover {
-    color: #000000;
-    transform: scale(1.1);
-}
-
-.social-links svg,
-.social-links img {
-    width: 20px;
-    height: 20px;
     display: block;
 }
 
