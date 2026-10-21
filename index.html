@@ -33,14 +33,23 @@
                 <img src="images/logo.png" alt="ARUCAD Logo" class="site-logo">
                 <span class="site-title">Faculty of Communication</span>
             </div>
-            <nav class="filter-container">
-                <button class="filter-btn active" onclick="filterProjects('ALL', this)">ALL</button>
-                <button class="filter-btn" onclick="filterProjects('VCD', this)">VCDE</button>
-                <button class="filter-btn" onclick="filterProjects('GAME', this)">GAME</button>
-                <button class="filter-btn" onclick="filterProjects('NMC', this)">NMC</button>
-                <button class="filter-btn" onclick="filterProjects('FINALS', this)">FINALS</button>
-                <a href="https://www.instagram.com/arucad.communication.faculty/?utm_source=ig_web_button_share_sheet" target="_blank"><img width="20" src="images/insta.png" alt="instagram" class="filter-btn"></a>
-            </nav>
+
+            <div class="header-right">
+                <nav class="filter-container">
+                    <button class="filter-btn active" onclick="filterProjects('ALL', this)">ALL</button>
+                    <button class="filter-btn" onclick="filterProjects('VCD', this)">VCDE</button>
+                    <button class="filter-btn" onclick="filterProjects('GAME', this)">GAME</button>
+                    <button class="filter-btn" onclick="filterProjects('NMC', this)">NMC</button>
+                    <button class="filter-btn" onclick="filterProjects('FINALS', this)">FINALS</button>
+                </nav>
+
+                <div class="social-links">
+                    <a href="https://www.instagram.com/arucad.communication.faculty/?utm_source=ig_web_button_share_sheet" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <img src="images/insta.png" alt="Instagram">
+                    </a>
+                    <!-- Add additional social links below as needed -->
+                </div>
+            </div>
         </header>
 
         <main id="portfolio-grid" class="portfolio-grid">
