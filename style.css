@@ -15,7 +15,7 @@
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
-    padding: 40px 20px;
+    padding: 0 20px 40px 20px; /* Top padding moved to header for smooth sticky behavior */
     line-height: 1.5;
 }
 
@@ -24,12 +24,18 @@ body {
     margin: 0 auto;
 }
 
+/* Updated Sticky Header */
 header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;                     /* Keeps menu above all scrolling cards */
+    background-color: var(--bg-color); /* Prevents cards from bleeding through */
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding-top: 40px;                 /* Maintains page spacing */
     padding-bottom: 30px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color); /* Fixed thin dividing line */
     margin-bottom: 40px;
 }
 
@@ -44,7 +50,6 @@ header {
 .site-title {
     font-size: 1.8rem !important;
     font-weight: bold;
-    /* color: #000; */
     color: var(--text-color);
     line-height: 1.2;
 }
@@ -79,6 +84,8 @@ nav a:hover {
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 40px 30px;
     align-items: start; /* Anchors all cards to the top of their row */
+    position: relative;
+    z-index: 1;         /* Ensures cards remain under header layer */
 }
 
 .project-card {
@@ -173,7 +180,7 @@ nav a:hover {
     color: var(--muted-color);
 }
 
-/* Filter Navigation Buttons (Restored to clean text aesthetic) */
+/* Filter Navigation Buttons */
 .filter-container {
     display: flex;
     gap: 20px;
@@ -251,7 +258,7 @@ nav a:hover {
 footer {
     margin-top: 80px;
     padding-top: 20px;
-    border-top: 1px solid var(--border-color); /* Separation line */
+    border-top: 1px solid var(--border-color);
     color: var(--muted-color);
     font-size: 0.85rem;
 }
@@ -297,6 +304,7 @@ footer {
         flex-direction: column;
         align-items: flex-start;
         gap: 15px;
+        padding-top: 15px;
     }
 
     .filter-container {
