@@ -113,22 +113,23 @@ nav a:hover {
     margin-bottom: 50px;
 }
 
+/* Portfolio Grid: Stretches all cards per row to match the tallest card */
 .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 40px 30px;
-    align-items: start; /* Anchors all cards to the top of their row */
+    align-items: stretch; /* Stretches row items to uniform row height */
     position: relative;
-    z-index: 1;         /* Ensures cards remain under header layer */
+    z-index: 1;           /* Ensures cards remain under header layer */
 }
 
+/* Project Card Flex Layout */
 .project-card {
     text-decoration: none;
     color: inherit;
     display: flex;
     flex-direction: column;
-    height: auto !important; /* Prevents card from stretching full row height */
-    align-self: start;       /* Isolates card height changes to itself */
+    height: 100% !important; /* Fills the stretched grid height */
 }
 
 /* Shared fixed-size media containers (Images, Videos, PDFs) */
@@ -142,6 +143,7 @@ nav a:hover {
     overflow: hidden;
     position: relative;
     border-radius: 6px;
+    flex-shrink: 0;          /* Prevents media height from shifting */
 }
 
 /* EmbedPDF Custom Element Styles */
@@ -217,9 +219,12 @@ nav a:hover {
     margin-bottom: 8px;
 }
 
+/* Excerpt fills remaining space to align bottom action buttons */
 .excerpt {
     font-size: 0.9rem;
     color: var(--muted-color);
+    margin-bottom: 15px;
+    flex-grow: 1; /* Pushes the button to the bottom */
 }
 
 /* Filter Navigation Buttons */
@@ -272,17 +277,18 @@ nav a:hover {
     padding: 30px 0;
 }
 
-/* Read Details Toggle Button */
+/* Read Details Toggle Button: Always anchored at the bottom edge */
 .toggle-btn {
     background: transparent;
     border: 1px solid var(--border-color, #eeeeee);
     color: var(--text-color, #111111);
     padding: 8px 16px;
-    margin-top: auto;
+    margin-top: auto; /* Anchors button to the lowest edge of the card */
     font-size: 0.85rem;
     cursor: pointer;
     border-radius: 4px;
     transition: all 0.2s ease;
+    width: 100%;
 }
 
 .toggle-btn:hover {
