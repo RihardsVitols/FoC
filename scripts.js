@@ -280,7 +280,7 @@ function renderInteractiveCard(interactiveUrl, coverImgUrl, title) {
                data-umami-event="Play Interactive Web Game"
                data-umami-event-title="${title}">
                 <img src="${previewImage}" alt="${title}" loading="lazy">
-                <span class="badge-interactive">Interactive Web</span>
+                <span class="badge-interactive">🌐 Interactive Web</span>
             </a>
         </div>`;
 }
@@ -350,15 +350,17 @@ function loadMoreProjects(countToLoad) {
         card.innerHTML = `
             ${mediaHTML}
             
-            <div class="meta">${metaText}</div>
-            <h2 class="project-title">${project.title}</h2>
-            <p class="excerpt">${project.excerpt}</p>
+            <div class="card-content">
+                <div class="meta">${metaText}</div>
+                <h2 class="project-title">${project.title}</h2>
+                ${project.excerpt ? `<p class="excerpt">${project.excerpt}</p>` : ''}
+            </div>
 
             ${project.pdf && (project.image || project.video || project.model3d || project.interactiveUrl) ? `
                 <a href="${project.pdf}" data-fancybox="project-${index}" data-type="pdf" data-caption="${project.title}" 
                    data-umami-event="View Attached PDF" 
                    data-umami-event-title="${project.title}" 
-                   class="pdf-link-btn">View Attached PDF</a>
+                   class="pdf-link-btn">📄 View Attached PDF</a>
             ` : ''}
             
             ${project.body ? `
