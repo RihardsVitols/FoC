@@ -2,7 +2,7 @@
 title: Tiny Pomy With Big Heart
 author: Azra Vatancerver
 date: "2025"
-category: VCD
+category: VCDE
 video: https://youtu.be/-icPbrboT3M
 excerpt: stop motion, wool, cardboard, metal wire
 ---
