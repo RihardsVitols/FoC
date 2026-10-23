@@ -346,21 +346,21 @@ footer {
         flex-direction: column;
         align-items: center;       /* Centers brand logo & text horizontally */
         text-align: center;
-        gap: 15px;
+        gap: 12px;
         padding-top: 20px;
     }
 
     .brand {
         flex-direction: column;    /* Stacks ARUCAD logo above Faculty title */
         align-items: center;
-        gap: 15px;
+        gap: 12px;
     }
 
     .header-right {
         flex-direction: column;    /* Stacks filter buttons above Instagram logo */
         align-items: center;       /* Centers everything horizontally */
         width: 100%;
-        gap: 15px;
+        gap: 12px;
     }
 
     .filter-container {
@@ -383,7 +383,7 @@ footer {
     }
     
     .site-logo {
-        height: 40px;
+        height: 50px;
     }
 
     .portfolio-grid {
