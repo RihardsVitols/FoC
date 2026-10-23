@@ -1,6 +1,6 @@
 ---
 title: Nature Sports Magazine
-author: YMED405 – Perception and Visual Reading in Design
+author: ????????
 date: "2026"
 category: NMC
 image: images/uploads/7.jpg
