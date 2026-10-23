@@ -132,6 +132,13 @@ nav a:hover {
     height: 100% !important; /* Fills the stretched grid height */
 }
 
+/* Card Content Container: Wraps meta, title, and excerpt/technique */
+.card-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Pushes technique label and toggle button down */
+}
+
 /* Shared fixed-size media containers (Images, Videos, PDFs) */
 .image-container,
 .video-container,
@@ -213,18 +220,19 @@ nav a:hover {
     margin-bottom: 5px;
 }
 
+/* Project Title expands to balance row height differences */
 .project-title {
     font-size: 1.2rem;
     font-weight: 500;
     margin-bottom: 8px;
+    flex-grow: 1; /* Absorbs extra height to align lower elements */
 }
 
-/* Excerpt fills remaining space to align bottom action buttons */
+/* Technique/Medium label anchored directly above the button */
 .excerpt {
     font-size: 0.9rem;
     color: var(--muted-color);
-    margin-bottom: 15px;
-    flex-grow: 1; /* Pushes the button to the bottom */
+    margin-bottom: 12px;
 }
 
 /* Filter Navigation Buttons */
@@ -277,13 +285,13 @@ nav a:hover {
     padding: 30px 0;
 }
 
-/* Read Details Toggle Button: Always anchored at the bottom edge */
+/* Read Details Toggle Button: Positioned directly under excerpt */
 .toggle-btn {
     background: transparent;
     border: 1px solid var(--border-color, #eeeeee);
     color: var(--text-color, #111111);
     padding: 8px 16px;
-    margin-top: auto; /* Anchors button to the lowest edge of the card */
+    margin-top: 0;
     font-size: 0.85rem;
     cursor: pointer;
     border-radius: 4px;
