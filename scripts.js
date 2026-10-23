@@ -234,13 +234,18 @@ function renderVideoEmbed(url) {
 function renderPdfThumbnail(pdfUrl, coverImgUrl, title, index) {
     if (!pdfUrl) return "";
 
-    const previewImage = coverImgUrl || 'images/default-pdf-cover.png';
+    if (coverImgUrl) {
+        return `
+            <div class="image-container">
+                <a href="${pdfUrl}" data-fancybox="project-${index}" data-type="pdf" data-caption="${title}">
+                    <img src="${coverImgUrl}" alt="${title}" loading="lazy">
+                </a>
+            </div>`;
+    }
 
     return `
-        <div class="image-container">
-            <a href="${pdfUrl}" data-fancybox="project-${index}" data-type="pdf" data-caption="${title}">
-                <img src="${previewImage}" alt="${title}" loading="lazy">
-            </a>
+        <div class="pdf-container">
+            <embed-pdf src="${pdfUrl}" theme="light" style="width:100%; height:100%; border:none;"></embed-pdf>
         </div>`;
 }
 
@@ -275,7 +280,7 @@ function renderInteractiveCard(interactiveUrl, coverImgUrl, title) {
                data-umami-event="Play Interactive Web Game"
                data-umami-event-title="${title}">
                 <img src="${previewImage}" alt="${title}" loading="lazy">
-                <span class="badge-interactive">🌐 Interactive Web</span>
+                <span class="badge-interactive">Interactive Web</span>
             </a>
         </div>`;
 }
@@ -353,7 +358,7 @@ function loadMoreProjects(countToLoad) {
                 <a href="${project.pdf}" data-fancybox="project-${index}" data-type="pdf" data-caption="${project.title}" 
                    data-umami-event="View Attached PDF" 
                    data-umami-event-title="${project.title}" 
-                   class="pdf-link-btn">📄 View Attached PDF</a>
+                   class="pdf-link-btn">View Attached PDF</a>
             ` : ''}
             
             ${project.body ? `
