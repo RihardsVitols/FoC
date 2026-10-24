@@ -1,8 +1,8 @@
 :root {
-    --bg-color: #FEFEFA;
+    --bg-color: #f0efeb;
     --text-color: #484d51;
     --muted-color: #666666;
-    --border-color: #666666; 
+    --border-color: #666666;
 }
 
 * {
@@ -14,16 +14,11 @@
 
 body {
     background-color: var(--bg-color);
-    /* Radial lighting gradient + nested geometric line grid */
-    background-attachment: fixed;
-    background-repeat: repeat;
-    background-size: cover, 240px 20px;
-    color: var(--text-color); /* line under section on the right */
-    padding: 0 20px 40px 20px;
+    color: var(--text-color);
+    padding: 0 20px 40px 20px; /* Top padding moved to header for smooth sticky behavior */
     line-height: 1.5;
 }
 
-/* Container */
 .container {
     max-width: 1200px;
     margin: 0 auto;
@@ -34,8 +29,7 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;                     /* Keeps menu above all scrolling cards */
-    background-color: var(--bg-color); /* Matches dark background theme */
-    backdrop-filter: blur(8px);
+    background-color: var(--bg-color); /* Prevents cards from bleeding through */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -119,35 +113,22 @@ nav a:hover {
     margin-bottom: 50px;
 }
 
-/* Portfolio Grid: Stretches all cards per row to match the tallest card */
 .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
     gap: 40px 30px;
-    align-items: stretch; /* Stretches row items to uniform row height */
+    align-items: start; /* Anchors all cards to the top of their row */
     position: relative;
-    z-index: 1;           /* Ensures cards remain under header layer */
+    z-index: 1;         /* Ensures cards remain under header layer */
 }
 
-/* Project Card Flex Layout & Glassmorphism Styling */
 .project-card {
     text-decoration: none;
-    color: var(--bg-color);
+    color: inherit;
     display: flex;
     flex-direction: column;
-    height: 100% !important; /* Fills the stretched grid height */
-    /* background-color: var(--bg-color); */
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 16px;
-    backdrop-filter: blur(4px);
-}
-
-/* Card Content Container: Wraps meta, title, and excerpt/technique */
-.card-content {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Pushes technique label and toggle button down */
+    height: auto !important; /* Prevents card from stretching full row height */
+    align-self: start;       /* Isolates card height changes to itself */
 }
 
 /* Shared fixed-size media containers (Images, Videos, PDFs) */
@@ -156,20 +137,11 @@ nav a:hover {
 .pdf-container {
     width: 100%;
     height: 240px !important; /* Enforce uniform card height across image, video, and PDF */
-    background-color: #0b1d28;
+    background-color: #f4f4f4;
     margin-bottom: 15px;
     overflow: hidden;
     position: relative;
     border-radius: 6px;
-    flex-shrink: 0;          /* Prevents media height from shifting */
-}
-
-/* EmbedPDF Custom Element Styles */
-.pdf-container embed-pdf {
-    display: block;
-    width: 100%;
-    height: 100%;
-    border: none;
 }
 
 .image-container img {
@@ -213,14 +185,14 @@ nav a:hover {
     display: inline-block;
     margin-top: 8px;
     font-size: 0.85rem;
-    color: #66b2ff;
+    color: #0066cc;
     text-decoration: underline;
     font-weight: 500;
     transition: color 0.2s ease;
 }
 
 .pdf-link-btn:hover {
-    color: #99ccff;
+    color: #004499;
 }
 
 .meta {
@@ -231,20 +203,15 @@ nav a:hover {
     margin-bottom: 5px;
 }
 
-/* Project Title expands to balance row height differences */
 .project-title {
     font-size: 1.2rem;
     font-weight: 500;
     margin-bottom: 8px;
-    flex-grow: 1; /* Absorbs extra height to align lower elements */
-    color: var(--text-color);
 }
 
-/* Technique/Medium label anchored directly above the button */
 .excerpt {
     font-size: 0.9rem;
     color: var(--muted-color);
-    margin-bottom: 12px;
 }
 
 /* Filter Navigation Buttons */
@@ -257,7 +224,7 @@ nav a:hover {
 .filter-btn {
     background: transparent;
     border: none;
-    color: var(--muted-color);
+    color: var(--muted-color, #666666);
     font-size: 0.95rem;
     font-weight: 500;
     cursor: pointer;
@@ -267,54 +234,52 @@ nav a:hover {
 }
 
 .filter-btn:hover {
-    color: var(--text-color);
+    color: var(--text-color, #111111);
 }
 
 .filter-btn.active {
-    color: var(--text-color);
+    color: var(--text-color, #111111);
     font-weight: 700;
-    border-bottom: 2px solid #d4af37;
+    border-bottom: 2px solid var(--text-color, #111111);
     border-radius: 0;
 }
 
 /* Clickable Project Links */
 .full-details a.project-link {
-    color: #66b2ff;
+    color: #0066cc;
     text-decoration: underline;
     word-break: break-word;
     transition: color 0.2s ease;
 }
 
 .full-details a.project-link:hover {
-    color: #99ccff;
+    color: #004499;
 }
 
 /* Loading Placeholder Text */
 .loading-text {
-    color: var(--muted-color);
+    color: var(--muted-color, #777777);
     font-size: 0.95rem;
     grid-column: 1 / -1;
     padding: 30px 0;
 }
 
-/* Read Details Toggle Button: Positioned directly under excerpt */
+/* Read Details Toggle Button */
 .toggle-btn {
     background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
+    border: 1px solid var(--border-color, #eeeeee);
+    color: var(--text-color, #111111);
     padding: 8px 16px;
-    margin-top: 0;
+    margin-top: auto;
     font-size: 0.85rem;
     cursor: pointer;
     border-radius: 4px;
     transition: all 0.2s ease;
-    width: 100%;
 }
 
 .toggle-btn:hover {
-    background-color: rgba(212, 175, 55, 0.2);
+    background-color: var(--text-color, #111111);
     color: #ffffff;
-    border-color: #d4af37;
 }
 
 .full-details {
@@ -359,7 +324,7 @@ footer {
 .fancybox-3d-wrapper model-viewer {
     width: 100%;
     height: 100%;
-    background-color: #0b1d28;
+    background-color: #f8f9fa;
     display: block;
 }
 
@@ -373,21 +338,21 @@ footer {
         flex-direction: column;
         align-items: center;       /* Centers brand logo & text horizontally */
         text-align: center;
-        gap: 12px;
+        gap: 15px;
         padding-top: 20px;
     }
 
     .brand {
         flex-direction: column;    /* Stacks ARUCAD logo above Faculty title */
         align-items: center;
-        gap: 12px;
+        gap: 15px;
     }
 
     .header-right {
         flex-direction: column;    /* Stacks filter buttons above Instagram logo */
         align-items: center;       /* Centers everything horizontally */
         width: 100%;
-        gap: 12px;
+        gap: 15px;
     }
 
     .filter-container {
@@ -410,7 +375,7 @@ footer {
     }
     
     .site-logo {
-        height: 50px;
+        height: 40px;
     }
 
     .portfolio-grid {
