@@ -354,9 +354,12 @@ footer {
     header {
         position: sticky;
         top: 0;
-        z-index: 1000;                      /* Keeps menu above all scrolling cards */
-        background-color: var(--bg-color);  /* Solid background color to block scrolling cards */
-        backdrop-filter: none;         /* Optional glass blur for extra coverage */
+        z-index: 99999 !important;                  /* Forces header above all card content */
+        background-color: var(--bg-color) !important; /* Solid background filling the full header area */
+        opacity: 1 !important;                      /* Guarantees full opacity */
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
         flex-direction: column;
         align-items: center;                /* Centers brand logo & text horizontally */
         text-align: center;
