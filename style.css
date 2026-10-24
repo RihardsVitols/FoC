@@ -237,7 +237,7 @@ nav a:hover {
 }
 
 .filter-btn:hover {
-    color: var(--border-color, #111111);
+    color: var(--text-color, #111111);
 }
 
 .filter-btn.active {
