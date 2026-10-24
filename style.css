@@ -352,12 +352,19 @@ footer {
     }
 
     header {
-        background-color: var(--bg-color); /* Prevents cards from bleeding through */
+        position: sticky;
+        top: 0;
+        z-index: 1000;                      /* Keeps menu above all scrolling cards */
+        background-color: var(--bg-color);  /* Solid background color to block scrolling cards */
+        backdrop-filter: blur(8px);         /* Optional glass blur for extra coverage */
         flex-direction: column;
-        align-items: center;       /* Centers brand logo & text horizontally */
+        align-items: center;                /* Centers brand logo & text horizontally */
         text-align: center;
         gap: 15px;
         padding-top: 20px;
+        padding-bottom: 20px;
+        margin-bottom: 20px;
+        border-bottom: 1px solid var(--border-color);
     }
 
     .brand {
