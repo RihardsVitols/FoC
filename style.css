@@ -352,6 +352,7 @@ footer {
     }
 
     header {
+        background-color: var(--bg-color); /* Prevents cards from bleeding through */
         flex-direction: column;
         align-items: center;       /* Centers brand logo & text horizontally */
         text-align: center;
