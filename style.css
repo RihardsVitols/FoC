@@ -1,5 +1,5 @@
 :root {
-    --bg-color: #FEFEFA;
+    --bg-color: #FFFDF1;
     --text-color: #484d51;
     --muted-color: #666666;
     --border-color: #666666; 
@@ -21,7 +21,8 @@ body {
     background-attachment: fixed;
     background-repeat: repeat;
     background-size: cover, 80px 80px;
-    color: var(--text-color);
+    /* color: var(--text-color); */
+    color: #EEDC82;
     padding: 0 20px 40px 20px;
     line-height: 1.5;
 }
