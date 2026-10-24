@@ -271,7 +271,7 @@ nav a:hover {
 .toggle-btn {
     background: transparent;
     border: 1px solid var(--border-color, #eeeeee);
-    color: var(--text-color, #111111);
+    color: var(--border-color, #111111);
     padding: 8px 16px;
     margin-top: auto;
     font-size: 0.85rem;
