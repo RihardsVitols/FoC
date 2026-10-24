@@ -3,6 +3,7 @@
     --text-color: #484d51;
     --muted-color: #666666;
     --border-color: #f8cd3f;
+    --pdf-color: #f4f4f4;
 }
 
 * {
@@ -124,7 +125,8 @@ nav a:hover {
 
 .project-card {
     text-decoration: none;
-    color: inherit;
+    /* color: inherit; */
+    color: var(--text-color);
     display: flex;
     flex-direction: column;
     height: auto !important; /* Prevents card from stretching full row height */
@@ -137,7 +139,8 @@ nav a:hover {
 .pdf-container {
     width: 100%;
     height: 240px !important; /* Enforce uniform card height across image, video, and PDF */
-    background-color: #f4f4f4;
+    /* background-color: #f4f4f4; */
+    background-color: var(--pdf-color);
     margin-bottom: 15px;
     overflow: hidden;
     position: relative;
@@ -234,7 +237,7 @@ nav a:hover {
 }
 
 .filter-btn:hover {
-    color: var(--text-color, #111111);
+    color: var(--border-color, #111111);
 }
 
 .filter-btn.active {
