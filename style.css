@@ -1,8 +1,8 @@
 :root {
     --bg-color: #fefefa;
     --text-color: #484d51;
-    --muted-color: #909b9d;
-    --border-color: #666666;
+    --muted-color: #666666;
+    --border-color: #909b9d;
 }
 
 * {
