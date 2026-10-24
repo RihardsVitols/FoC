@@ -103,7 +103,7 @@ nav a {
 }
 
 nav a:hover {
-    color: var(--text-color);
+    color: var(--border-color);
 }
 
 .intro {
