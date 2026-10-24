@@ -13,10 +13,10 @@
 }
 
 body {
-    background-color: #FEFEFA;
+    background-color: #FEFBE8;
     /* Radial lighting gradient + nested geometric line grid */
     background-image: 
-        radial-gradient(circle at 50% 40%, rgba(18, 92, 126, 0.9) 0%, #FEFEFA 75%),
+        radial-gradient(circle at 50% 40%, #FEFEFA 0%, #FEFBE8 75%),
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80' viewBox='0 0 80 80'%3E%3Cg fill='none' stroke='%23d4af37' stroke-width='1.2' stroke-opacity='0.5'%3E%3Cpath d='M0 0 L80 80 M80 0 L0 80'/%3E%3Cpath d='M40 0 L80 40 L40 80 L0 40 Z'/%3E%3Cpath d='M40 10 L70 40 L40 70 L10 40 Z'/%3E%3Cpath d='M40 20 L60 40 L40 60 L20 40 Z'/%3E%3Cpath d='M0 10 L10 0 M0 20 L20 0 M0 30 L30 0'/%3E%3Cpath d='M80 10 L70 0 M80 20 L60 0 M80 30 L50 0'/%3E%3Cpath d='M0 70 L10 80 M0 60 L20 80 M0 50 L30 80'/%3E%3Cpath d='M80 70 L70 80 M80 60 L60 80 M80 50 L50 80'/%3E%3C/g%3E%3C/svg%3E");
     background-attachment: fixed;
     background-repeat: repeat;
