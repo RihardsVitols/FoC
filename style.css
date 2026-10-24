@@ -238,11 +238,12 @@ nav a:hover {
 
 .filter-btn:hover {
     color: var(--text-color, #111111);
+    font-weight: 700;
 }
 
 .filter-btn.active {
     color: var(--text-color, #111111);
-    font-weight: 700;
+    font-weight: 750;
     border-bottom: 2px solid var(--text-color, #111111);
     border-radius: 0;
 }
